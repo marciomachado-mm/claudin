@@ -1,0 +1,83 @@
+name: Docs semanais
+
+# Baixa as docs oficiais, roda o detector de defasagem e abre (ou atualiza) um PR com os
+# snapshots novos e o relatório no corpo. A revisão e o --set-aligned continuam manuais.
+# Requer em Settings → Actions → General: "Allow GitHub Actions to create and approve
+# pull requests".
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"  # segunda, 06:00 em Brasília
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: docs-weekly
+  cancel-in-progress: false
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # o detector compara com o commit do último alinhamento
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Baixar docs
+        run: python tools/fetch_docs.py
+
+      - name: Há snapshot novo?
+        id: changes
+        run: |
+          if git diff --quiet -- plugins/claudin/knowledge/snapshots; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Relatório de defasagem
+        if: steps.changes.outputs.changed == 'true'
+        run: python tools/check_drift.py --output "$RUNNER_TEMP/drift.md" || true
+
+      - name: Testes com os snapshots novos
+        if: steps.changes.outputs.changed == 'true'
+        id: tests
+        run: |
+          if python -m unittest discover -s tests 2> "$RUNNER_TEMP/tests.txt"; then
+            echo "result=passaram" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=FALHARAM: alguma regra perdeu o trecho que a sustenta ou um campo mudou na doc" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Abrir ou atualizar o PR
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          branch=docs/semanal
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add plugins/claudin/knowledge/snapshots tools/snapshots-state.json
+          git commit -m "chore: atualiza snapshots das docs oficiais"
+          git push --force origin "$branch"
+          {
+            echo "Testes com os snapshots novos: ${{ steps.tests.outputs.result }}"
+            echo
+            cat "$RUNNER_TEMP/drift.md"
+            echo
+            echo "---"
+            echo "Revise localmente com /update-docs. Depois de mesclar, rode --set-aligned."
+          } > "$RUNNER_TEMP/body.md"
+          if gh pr view "$branch" --json state -q .state 2>/dev/null | grep -q OPEN; then
+            gh pr edit "$branch" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh pr create --head "$branch" --title "Docs oficiais: atualização semanal" --body-file "$RUNNER_TEMP/body.md"
+          fi

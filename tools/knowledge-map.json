@@ -4,9 +4,11 @@
     "plugins/claudin/skills/*/SKILL.md",
     "plugins/claudin/agents/*.md",
     "plugins/claudin/knowledge/guides/*.md",
-    "CLAUDE.md"
+    "CLAUDE.md",
+    ".claude/skills/*/SKILL.md"
   ],
   "artifacts": {
+    ".claude/skills/update-docs/SKILL.md": [],
     "CLAUDE.md": [
       "plugins",
       "plugin-evals"
