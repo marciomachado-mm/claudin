@@ -20,12 +20,13 @@ da regra; o resto exige leitura e julgamento.
 |---|---|---|---|
 | `Write(path)`, `NotebookEdit(path)`, `Glob(path)` em permissões | `Edit(path)` ou `Read(path)` | Aceitas mas nunca consultadas, desde a v2.1.210 | `permissions.md` (PERM-001) |
 | `Bash(command:rm *)` | `Bash(rm *)` | Regra sobre o campo principal é ignorada | `permissions.md` (PERM-002) |
-| `deny: Bash(rm -rf *)` tratado como proteção | Sandbox para isolamento real; deny como atrito | Padrões de Bash com argumentos são frágeis e contornáveis | `permissions.md` (PERM-003), `sandboxing.md` |
+| `deny: Bash(rm -rf *)` tratado como proteção | Sandbox para isolamento real; deny como atrito | Padrões de Bash com argumentos são frágeis e contornáveis. O sandbox roda em macOS, Linux e WSL2; no Windows nativo os comandos rodam sem sandbox | `permissions.md` (PERM-003), `sandboxing.md` |
 | `deny: Read(path)` esperando bloquear toda escrita | Somar `Edit(path)` ao deny | Deny de `Read` bloqueia Edit (v2.1.208+) e Write (v2.1.228+) no mesmo caminho, mas não NotebookEdit | `permissions.md` |
-| `.claudeignore` para esconder arquivos | `Read(./.env)`, `Read(./secrets/**)` em deny | O Claude Code não lê `.claudeignore` | `permissions.md` |
+| `.claudeignore` para esconder arquivos | `Read(.env)`, `Read(secrets/**)` em deny | O Claude Code não lê `.claudeignore` | `permissions.md` |
 | `settings.json` sem `permissions` | `allow` e `deny` explícitos | Desde a v2.1.283 o modo inicial no terminal e no VS Code é auto: um classificador decide. Só deny explícito garante bloqueio | `permission-modes.md` |
 | `autoMode` em settings do projeto | `~/.claude/settings.json` ou managed | O escopo de `autoMode` é usuário ou managed | `settings-reference.md` |
 | Deny ou hook `PreToolUse` como garantia absoluta | Managed settings ou sandbox para o que é crítico | Um mod com `tool.check` responde depois das regras e dos hooks e pode trocar a decisão | `permissions.md` § mods |
+| `deny: Read(./.env)` esperando cobrir o monorepo | `Read(.env)` | Com `./` a regra casa só na raiz; nome sem prefixo casa em qualquer profundidade do projeto | `permissions.md` |
 | `settings.local.json` commitado | No `.gitignore` | É override pessoal | `settings.md` |
 | Settings com comentário ou vírgula sobrando | JSON estrito | O arquivo vira Settings Error e é ignorado | `settings.md` (SET-001) |
 

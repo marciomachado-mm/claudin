@@ -3,7 +3,9 @@ name: create-agent
 description: Cria um subagente num projeto, checando antes se subagente é o recurso certo, com tools mínimas e description que faz o Claude delegar.
 disable-model-invocation: true
 argument-hint: "<o que o agente deve fazer>"
-allowed-tools: Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+allowed-tools:
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Crie um subagente para: $ARGUMENTS
@@ -13,7 +15,14 @@ Se não houver descrição acima, pergunte o que o agente deve fazer. O destino 
 
 ## 1. É subagente mesmo?
 
-Leia `${CLAUDE_PLUGIN_ROOT}/knowledge/guides/choosing-features.md`. Subagente serve para
+Os comandos do claudin são pré-aprovados só na forma exata: rode cada um **sozinho**
+(sem `cd`, `&&` ou `;`) e escreva o caminho com barras `/`.
+
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide choosing-features
+```
+
+Subagente serve para
 **isolar contexto**: começa do zero, não vê a conversa, não pergunta nada ao usuário e
 devolve um resumo. Se a tarefa precisa conversar, ou se o resultado detalhado precisa
 voltar inteiro, proponha o recurso certo (skill, rule, hook) e pare aqui, a menos que o
@@ -46,7 +55,30 @@ terminal e no VS Code. Restrição que vale sempre vem de `tools` e `permissions
 
 ## 3. Proponha e confirme
 
-Use `${CLAUDE_SKILL_DIR}/templates/agent.md` como base. Mostre o arquivo completo e
+Base do arquivo:
+
+```markdown
+---
+name: nome-do-agente
+description: O que faz e QUANDO o Claude deve delegar. Ex: "Revisa diffs buscando problemas de segurança. Use quando o usuário pedir revisão de segurança de um branch."
+tools: Read, Glob, Grep
+---
+
+Você é <papel> em <domínio>. Quem te chama passa <o que você recebe no prompt>.
+
+## Passos
+
+1. <primeiro passo concreto, normalmente mapear ou ler>
+2. <...>
+
+Pronto quando <condição verificável>.
+
+## Saída
+
+<formato fixo: é o que volta para quem chamou>
+```
+
+Mostre o arquivo completo e
 espere a confirmação. Só então escreva `.claude/agents/<nome>.md`. `name` em minúsculas e
 hífens, sem `:`.
 

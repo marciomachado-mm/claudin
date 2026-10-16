@@ -3,7 +3,9 @@ name: fix
 description: Corrige a estrutura Claude Code de um repositório a partir de uma auditoria, com sua aprovação antes de editar e validação depois.
 disable-model-invocation: true
 argument-hint: "<caminho-do-repo>"
-allowed-tools: Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+allowed-tools:
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Corrija a estrutura Claude Code do repositório em: $ARGUMENTS
@@ -28,8 +30,13 @@ Monte uma tabela com cada correção proposta:
 | # | Arquivo | Problema | Correção | Fonte |
 |---|---|---|---|---|
 
-Antes de propor, leia `${CLAUDE_PLUGIN_ROOT}/knowledge/guides/anti-patterns.md` para usar a
-correção recomendada. Correção que exige decisão de desenho (ex: dividir o CLAUDE.md em
+Antes de propor, carregue o catálogo para usar a correção recomendada (rode o comando
+sozinho, caminho com barras `/`):
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide anti-patterns
+```
+
+Correção que exige decisão de desenho (ex: dividir o CLAUDE.md em
 rules, trocar o modelo de um agente) entra marcada como **decisão**, com a sua
 recomendação.
 

@@ -3,7 +3,9 @@ name: create-skill
 description: Cria uma skill num projeto, checando antes se skill é o recurso certo, com a description que faz ela ser usada e proteção para o que tem efeito colateral.
 disable-model-invocation: true
 argument-hint: "<o que a skill deve fazer>"
-allowed-tools: Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+allowed-tools:
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Crie uma skill para: $ARGUMENTS
@@ -13,15 +15,21 @@ Se não houver descrição acima, pergunte o que a skill deve fazer. O destino �
 
 ## 1. É skill mesmo?
 
-Leia `${CLAUDE_PLUGIN_ROOT}/knowledge/guides/choosing-features.md`. Se alguém vai querer
+Os comandos do claudin são pré-aprovados só na forma exata: rode cada um **sozinho**
+(sem `cd`, `&&` ou `;`) e escreva o caminho com barras `/`.
+
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide choosing-features writing-for-agents
+```
+
+Se alguém vai querer
 **chamar**, é skill; se o Claude deve **já saber**, é rule ou CLAUDE.md; se precisa
 acontecer **sempre** num evento, é hook. Fora do caso de skill, proponha o recurso certo e
 pare, a menos que o usuário insista.
 
 ## 2. Decida as peças
 
-Leia `${CLAUDE_PLUGIN_ROOT}/knowledge/guides/writing-for-agents.md` antes de escrever o
-corpo. Pergunte só o que é decisão:
+Escreva o corpo seguindo o guia `writing-for-agents`. Pergunte só o que é decisão:
 
 - **Quem chama** (`skills.md`, tabela de invocação):
   - efeito colateral (deploy, commit, envio, escrita) → `disable-model-invocation: true`;
@@ -43,7 +51,26 @@ corpo. Pergunte só o que é decisão:
 
 ## 3. Proponha e confirme
 
-Use `${CLAUDE_SKILL_DIR}/templates/SKILL.md.template` como base. Mostre a estrutura e o conteúdo
+Base do `SKILL.md`:
+
+```markdown
+---
+description: O que faz e quando usar, caso de uso principal primeiro.
+argument-hint: "<argumento>"
+---
+
+<Uma frase: o que este fluxo resolve.> Alvo: $ARGUMENTS
+
+## 1. <Primeiro passo>
+<instrução concreta; se houver comando, o comando>
+
+## 2. Confirme antes de agir
+<se escreve, publica ou envia: mostre o resultado e só execute após confirmação>
+
+Pronto quando <condição verificável>.
+```
+
+Mostre a estrutura e o conteúdo
 completos e espere a confirmação. Só então crie a pasta e os arquivos.
 
 ## 4. Valide

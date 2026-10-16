@@ -17,6 +17,12 @@ Repo de desenvolvimento do plugin `claudin` (claud(e) + (plug)in). Este repo é 
   issue ou PR. O teste `tests/test_repo_hygiene.py` falha se algo do `lab/` for rastreado
 - Código dentro de `plugins/claudin/scripts/` usa só a biblioteca padrão do Python: a cópia
   instalada não tem venv
+- Skill do plugin roda no projeto do usuário, onde ler a pasta do plugin com Read pede
+  permissão (e falha em `claude -p`). Guias, snapshots e metadados chegam pelo
+  `scripts/kb.py`, pré-aprovado em `allowed-tools` como
+  `Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)`. A skill manda rodar cada comando
+  sozinho e com barras `/`, porque só a forma exata casa com a pré-aprovação. Template vai
+  dentro do próprio `SKILL.md`
 - Toda afirmação sobre o Claude Code cita a fonte (página da doc oficial)
 - Textos para o usuário em português; nomes de código em inglês
 

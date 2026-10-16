@@ -3,6 +3,8 @@ name: design
 description: Desenha a arquitetura Claude Code de um projeto (CLAUDE.md, rules, skills, agentes, hooks) em rodadas de perguntas, antes de criar qualquer arquivo.
 disable-model-invocation: true
 argument-hint: "<projeto ou problema>"
+allowed-tools:
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Desenhe a estrutura Claude Code para: $ARGUMENTS
@@ -12,12 +14,15 @@ Nenhum arquivo é criado aqui. O resultado é um entendimento compartilhado que 
 
 ## 1. Prepare
 
-Leia, nesta ordem:
+Os comandos do claudin são pré-aprovados só na forma exata: rode cada um **sozinho**
+(sem `cd`, `&&` ou `;`) e escreva o caminho com barras `/`.
 
-1. `${CLAUDE_PLUGIN_ROOT}/knowledge/guides/grill-me.md`: o protocolo que conduz a conversa
-2. `${CLAUDE_PLUGIN_ROOT}/knowledge/guides/choosing-features.md`: qual recurso para cada
-   necessidade
-3. `${CLAUDE_PLUGIN_ROOT}/knowledge/guides/anti-patterns.md`: o que não propor
+Carregue os três guias: `grill-me` (o protocolo da conversa), `choosing-features`
+(qual recurso para cada necessidade) e `anti-patterns` (o que não propor).
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide grill-me choosing-features anti-patterns
+```
+
 
 Se o projeto já existe no disco, mapeie antes de perguntar: manifestos da stack,
 `CLAUDE.md`, `.claude/`, scripts de build e teste. Stack e estrutura são fatos, não

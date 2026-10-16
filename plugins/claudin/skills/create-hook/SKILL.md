@@ -3,7 +3,9 @@ name: create-hook
 description: Cria um hook num projeto, escolhendo evento, matcher e handler e gerando o settings.json e o script com a semântica de saída certa para o evento.
 disable-model-invocation: true
 argument-hint: "<o que automatizar>"
-allowed-tools: Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+allowed-tools:
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Crie um hook para: $ARGUMENTS
@@ -12,18 +14,30 @@ Se não houver descrição acima, pergunte o que deve acontecer e em que momento
 é o `.claude/settings.json` do projeto atual, salvo se o usuário indicar outro escopo.
 
 Hook é a peça com mais armadilhas silenciosas: o efeito do código de saída e o formato do
-JSON de decisão **mudam por evento**. Todo detalhe abaixo se confere em
-`${CLAUDE_PLUGIN_ROOT}/knowledge/snapshots/hooks.md` antes de escrever.
+JSON de decisão **mudam por evento**. Todo detalhe abaixo se confere na doc oficial antes de escrever.
+
+Os comandos do claudin são pré-aprovados só na forma exata: rode cada um **sozinho**
+(sem `cd`, `&&` ou `;`) e escreva o caminho com barras `/`.
+
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py docs "<termo>" --page hooks
+```
+
+mostra as linhas de `hooks.md` sobre o termo (ex: o nome do evento ou `onFailure`).
 
 ## 1. É hook mesmo?
 
 Hook é para o que precisa acontecer **sempre** num evento, sem depender de o Claude
 lembrar. Se é preferência que o Claude pode seguir na maior parte das vezes, é instrução
-(CLAUDE.md ou rule). Ver `${CLAUDE_PLUGIN_ROOT}/knowledge/guides/choosing-features.md`.
+(CLAUDE.md ou rule). Na dúvida:
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide choosing-features
+```
+
 
 ## 2. Evento e filtro
 
-Mapeie a necessidade para o evento e leia a seção dele em `hooks.md`:
+Mapeie a necessidade para o evento e busque a seção dele com `kb.py docs`:
 
 | Necessidade | Evento |
 |---|---|

@@ -3,7 +3,9 @@ name: create-project
 description: Cria a estrutura Claude Code de um projeto (CLAUDE.md, .claude/, settings, .gitignore e as skills, agentes e hooks combinados), a partir de um desenho aprovado ou de poucas perguntas.
 disable-model-invocation: true
 argument-hint: "<caminho-do-projeto>"
-allowed-tools: Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+allowed-tools:
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+  - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Crie a estrutura Claude Code do projeto em: $ARGUMENTS
@@ -23,12 +25,19 @@ peça para completar o que falta.
 
 ## 2. Monte o plano
 
-Leia `${CLAUDE_PLUGIN_ROOT}/knowledge/guides/anti-patterns.md`. A base:
+Os comandos do claudin são pré-aprovados só na forma exata: rode cada um **sozinho**
+(sem `cd`, `&&` ou `;`) e escreva o caminho com barras `/`.
+
+```bash
+python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide anti-patterns
+```
+
+A base:
 
 | Arquivo | Conteúdo |
 |---|---|
 | `CLAUDE.md` | O que o projeto é, em uma frase; comandos reais de build, teste e execução; arquitetura em poucas linhas; convenções que o código não deixa óbvias. Curto: o que vale só para uma área vira rule |
-| `.claude/settings.json` | `permissions` explícitas: `allow` só com os comandos que o projeto usa (ex: `Bash(npm test)`); `deny` com `Read(./.env)`, `Read(./.env.*)` e `Edit(./.env)`. Se o usuário quer isolamento real de comandos, aponte o sandbox (`sandboxing.md`) em vez de denys de Bash |
+| `.claude/settings.json` | `permissions` explícitas: `allow` só com os comandos que o projeto usa (ex: `Bash(npm test)`); `deny` com `Read(.env)`, `Read(.env.*)` e `Edit(.env)`: sem `./`, o nome casa em qualquer profundidade do projeto, enquanto `./.env` cobre só a raiz (`permissions.md`). Se o usuário quer isolamento real de comandos, aponte o sandbox (`sandboxing.md`) em vez de denys de Bash; ele roda em macOS, Linux e WSL2, não no Windows nativo |
 | `.gitignore` | `CLAUDE.local.md` e `.claude/settings.local.json`, além do que a stack pede |
 | `.claude/rules/*.md` | Só para convenção de uma área, com `paths:` |
 | skills, agentes, hooks | Os combinados, cada um seguindo o mesmo processo de `/claudin:create-skill`, `/claudin:create-agent` e `/claudin:create-hook` |

@@ -324,4 +324,4 @@ def perm_bash_args(t: Target) -> Iterator[tuple[Path, str]]:
         spec = m.group("spec").strip() if m else ""
         # Uma regra 'command:' já é ignorada pelo Claude Code e reportada pelo PERM-002.
         if kind == "deny" and m and m.group("tool") == "Bash" and " " in spec and not spec.startswith("command:"):
-            yield path, f"deny '{entry}' é contornável por variações do comando; para isolamento real, use o sandbox"
+            yield path, f"deny '{entry}' é contornável por variações do comando; para isolamento real, use o sandbox (macOS, Linux ou WSL2)"

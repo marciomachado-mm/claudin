@@ -10,9 +10,9 @@
       "Bash(python plugins/claudin/scripts/validate.py *)"
     ],
     "deny": [
-      "Read(./.env)",
-      "Read(./.env.*)",
-      "Edit(./.env)"
+      "Read(.env)",
+      "Read(.env.*)",
+      "Edit(.env)"
     ]
   }
 }
