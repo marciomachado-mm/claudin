@@ -1,0 +1,21 @@
+---
+description: O que faz e quando usar, caso de uso principal primeiro. Ex: "Faz deploy para staging rodando build, testes e push. Use quando o usuário pedir deploy de staging."
+argument-hint: "<argumento>"
+---
+
+<Uma frase: o que este fluxo resolve.> Alvo: $ARGUMENTS
+
+## 1. <Primeiro passo>
+
+<Instrução concreta. Se houver comando, mostre o comando.>
+
+## 2. <Segundo passo>
+
+<...>
+
+## 3. Confirme antes de agir
+
+<Se escreve, publica ou envia algo: mostre o resultado proposto e só execute após
+confirmação. E use disable-model-invocation: true no frontmatter.>
+
+Pronto quando <condição verificável>.

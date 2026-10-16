@@ -28,6 +28,11 @@
       "best-practices",
       "sub-agents"
     ],
+    "plugins/claudin/knowledge/guides/choosing-features.md": [
+      "features-overview",
+      "sub-agents",
+      "skills"
+    ],
     "plugins/claudin/knowledge/guides/grill-me.md": [
       "sub-agents",
       "memory",
@@ -43,6 +48,24 @@
       "memory",
       "skills"
     ],
+    "plugins/claudin/skills/create-agent/SKILL.md": [
+      "sub-agents",
+      "permission-modes"
+    ],
+    "plugins/claudin/skills/create-hook/SKILL.md": [
+      "hooks",
+      "hooks-guide",
+      "permissions"
+    ],
+    "plugins/claudin/skills/create-project/SKILL.md": [
+      "permissions",
+      "sandboxing",
+      "memory"
+    ],
+    "plugins/claudin/skills/create-skill/SKILL.md": [
+      "skills"
+    ],
+    "plugins/claudin/skills/design/SKILL.md": [],
     "plugins/claudin/skills/fix/SKILL.md": [],
     "plugins/claudin/skills/grill-me/SKILL.md": []
   }

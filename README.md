@@ -6,8 +6,10 @@ Um plugin que audita, cria e corrige estruturas `.claude/` em qualquer projeto, 
 docs oficiais do Claude Code e só mantém o que comprovadamente funciona melhor que o Claude
 Code puro.
 
-> Em construção. Hoje: `/claudin:audit`, `/claudin:fix`, `/claudin:grill-me` e
-> `/claudin:about`. As skills de criação chegam nas próximas fases.
+> Em construção. Hoje: `/claudin:audit`, `/claudin:fix`, `/claudin:design`,
+> `/claudin:create-project`, `/claudin:create-agent`, `/claudin:create-skill`,
+> `/claudin:create-hook`, `/claudin:grill-me` e `/claudin:about`. Ainda sem avaliação
+> comparativa com o Claude Code puro.
 
 ## Instalar
 
