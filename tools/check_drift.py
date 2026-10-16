@@ -229,7 +229,7 @@ def set_aligned(repo: Path, version: str) -> int:
     state = load_json(path)
     state["aligned_version"] = version
     state["aligned_commit"] = git(repo, "rev-parse", "HEAD").strip()
-    path.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     print(f"Alinhado até a v{version} no commit {state['aligned_commit'][:7]}.")
     return 0
 

@@ -86,7 +86,7 @@ def load_state() -> dict[str, str]:
 
 
 def save_state(state: dict[str, str]) -> None:
-    STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
 
 
 def pages_to_fetch(only: str | None) -> dict[str, str]:
