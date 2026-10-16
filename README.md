@@ -6,8 +6,8 @@ Um plugin que audita, cria e corrige estruturas `.claude/` em qualquer projeto, 
 docs oficiais do Claude Code e só mantém o que comprovadamente funciona melhor que o Claude
 Code puro.
 
-> Em construção. Hoje o plugin tem só `/claudin:about`; as skills de auditoria, correção e
-> criação chegam nas próximas fases.
+> Em construção. Hoje: `/claudin:audit`, `/claudin:fix`, `/claudin:grill-me` e
+> `/claudin:about`. As skills de criação chegam nas próximas fases.
 
 ## Instalar
 
@@ -27,6 +27,13 @@ Depois, em qualquer projeto: `/claudin:about`.
 | `plugins/claudin/` | O plugin: o que é instalado |
 | `.claude-plugin/marketplace.json` | Faz deste repo um marketplace com um plugin |
 | `tests/` | Testes do repo e do validador |
+
+## Créditos
+
+O protocolo de `/claudin:grill-me` e o vocabulário de
+`knowledge/guides/writing-for-agents.md` são adaptados de
+[mattpocock/skills](https://github.com/mattpocock/skills), licença MIT,
+Copyright (c) Matt Pocock.
 
 ## Desenvolvimento
 
