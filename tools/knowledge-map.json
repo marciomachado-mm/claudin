@@ -1,0 +1,12 @@
+{
+  "_doc": "Artefato -> snapshots (sem .md) de que ele deriva. [] é declaração válida para o que não deriva das docs. O validador é mapeado sozinho pelas fontes das regras.",
+  "coverage_globs": [
+    "plugins/claudin/skills/*/SKILL.md",
+    "plugins/claudin/agents/*.md",
+    "CLAUDE.md"
+  ],
+  "artifacts": {
+    "plugins/claudin/skills/about/SKILL.md": [],
+    "CLAUDE.md": ["plugins", "plugin-evals"]
+  }
+}

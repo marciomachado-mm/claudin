@@ -20,9 +20,29 @@ Repo de desenvolvimento do plugin `claudin` (claud(e) + (plug)in). Este repo é 
 - Toda afirmação sobre o Claude Code cita a fonte (página da doc oficial)
 - Textos para o usuário em português; nomes de código em inglês
 
+## Validador
+
+`plugins/claudin/scripts/validator/checks.py` tem as regras. Cada regra declara `source`
+(snapshot), `evidence` (trecho literal dele) e `since` (versão, quando a doc data). Regra
+nova exige um caso ruim em `tests/validator_fixtures.py`; os testes falham sem ele, e
+também falham se o trecho de `evidence` sumir do snapshot.
+
+## Docs oficiais
+
+Snapshots em `plugins/claudin/knowledge/snapshots/` (vão junto com o plugin). Ciclo:
+
+1. `python tools/fetch_docs.py`
+2. `python tools/check_drift.py`: afirmações novas, documentadas com atraso, artefatos a
+   revisar e itens "Added" do changelog
+3. Revisar, corrigir, commitar os snapshots
+4. `python tools/check_drift.py --set-aligned <versão>`
+
+Todo arquivo dos `coverage_globs` precisa estar em `tools/knowledge-map.json`.
+
 ## Comandos
 
 ```bash
 claude plugin validate .
 python -m unittest discover -s tests -v
+python plugins/claudin/scripts/validate.py <caminho>
 ```

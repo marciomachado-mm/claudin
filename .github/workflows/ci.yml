@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # 3.11 é o mínimo suportado; 3.13 é o que roda no Windows de desenvolvimento.
+        python: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Testes
+        run: python -m unittest discover -s tests -v
+
+      - name: Validador do claudin no próprio plugin
+        run: python plugins/claudin/scripts/validate.py plugins/claudin
+
+      - name: Cobertura do knowledge-map
+        run: python tools/check_drift.py --coverage-only
+
+  plugin-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: claude plugin validate (marketplace e plugin)
+        run: |
+          npx --yes @anthropic-ai/claude-code@2.1.299 plugin validate .
+          npx --yes @anthropic-ai/claude-code@2.1.299 plugin validate ./plugins/claudin

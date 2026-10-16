@@ -1,6 +1,6 @@
 {
   "name": "claudin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "claud(e) + (plug)in: toolkit pessoal de Claude Code. Audita, cria e corrige estruturas .claude/ e acompanha as docs oficiais.",
   "author": {
     "name": "Marcio Machado",
