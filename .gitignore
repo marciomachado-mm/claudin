@@ -1,0 +1,21 @@
+# Laboratório privado: clone do repo claudin_lab, nunca entra neste repo
+lab/
+
+# Claude Code: pessoal
+CLAUDE.local.md
+.claude/settings.local.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+
+# Resultados de eval (o claude plugin eval grava em evals/results/)
+plugins/claudin/evals/results/
+
+# Misc
+.DS_Store
+*.log

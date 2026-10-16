@@ -1,0 +1,15 @@
+{
+  "name": "claudin",
+  "description": "Marketplace do claudin: toolkit pessoal de Claude Code",
+  "owner": {
+    "name": "Marcio Machado",
+    "url": "https://github.com/marciomachado-mm"
+  },
+  "plugins": [
+    {
+      "name": "claudin",
+      "source": "./plugins/claudin",
+      "description": "Audita, cria e corrige estruturas .claude/ e acompanha as docs oficiais do Claude Code"
+    }
+  ]
+}

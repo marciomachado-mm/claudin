@@ -1,0 +1,11 @@
+{
+  "name": "claudin",
+  "version": "0.1.0",
+  "description": "claud(e) + (plug)in: toolkit pessoal de Claude Code. Audita, cria e corrige estruturas .claude/ e acompanha as docs oficiais.",
+  "author": {
+    "name": "Marcio Machado",
+    "url": "https://github.com/marciomachado-mm"
+  },
+  "repository": "https://github.com/marciomachado-mm/claudin",
+  "keywords": ["claude-code", "audit", "skills", "agents", "hooks"]
+}
