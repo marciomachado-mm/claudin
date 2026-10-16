@@ -5,7 +5,9 @@ disable-model-invocation: true
 argument-hint: "<caminho-do-repo>"
 allowed-tools:
   - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+  - Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
   - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
+  - Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Corrija a estrutura Claude Code do repositório em: $ARGUMENTS
@@ -32,6 +34,7 @@ Monte uma tabela com cada correção proposta:
 
 Antes de propor, carregue o catálogo para usar a correção recomendada (rode o comando
 sozinho, caminho com barras `/`):
+Use `python` no Windows; no Linux ou macOS, se `python` não existir, use `python3` no lugar, com o resto do comando igual.
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide anti-patterns
 ```

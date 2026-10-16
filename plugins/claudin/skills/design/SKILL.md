@@ -5,6 +5,7 @@ disable-model-invocation: true
 argument-hint: "<projeto ou problema>"
 allowed-tools:
   - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
+  - Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Desenhe a estrutura Claude Code para: $ARGUMENTS
@@ -16,6 +17,7 @@ Nenhum arquivo é criado aqui. O resultado é um entendimento compartilhado que 
 
 Os comandos do claudin são pré-aprovados só na forma exata: rode cada um **sozinho**
 (sem `cd`, `&&` ou `;`) e escreva o caminho com barras `/`.
+Use `python` no Windows; no Linux ou macOS, se `python` não existir, use `python3` no lugar, com o resto do comando igual.
 
 Carregue os três guias: `grill-me` (o protocolo da conversa), `choosing-features`
 (qual recurso para cada necessidade) e `anti-patterns` (o que não propor).

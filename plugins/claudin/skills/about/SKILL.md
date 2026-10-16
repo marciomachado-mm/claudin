@@ -4,9 +4,11 @@ description: Mostra a versão do claudin instalada e o que ele oferece hoje.
 disable-model-invocation: true
 allowed-tools:
   - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
+  - Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Rode este comando sozinho, com o caminho escrito com barras `/`:
+Use `python` no Windows; no Linux ou macOS, se `python` não existir, use `python3` no lugar, com o resto do comando igual.
 
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py about

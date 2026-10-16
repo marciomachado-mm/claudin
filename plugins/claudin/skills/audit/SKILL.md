@@ -4,13 +4,16 @@ description: Audita a estrutura Claude Code de um repositório (CLAUDE.md, .clau
 argument-hint: "<caminho-do-repo>"
 allowed-tools:
   - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+  - Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
   - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
+  - Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Audite a estrutura Claude Code do repositório em: $ARGUMENTS
 
 Os comandos do claudin abaixo são pré-aprovados só na forma exata: rode cada um
 **sozinho** (sem `cd`, `&&`, `;` ou `echo`) e escreva o caminho com barras `/`.
+Use `python` no Windows; no Linux ou macOS, se `python` não existir, use `python3` no lugar, com o resto do comando igual.
 
 ## 1. Resolva o alvo
 

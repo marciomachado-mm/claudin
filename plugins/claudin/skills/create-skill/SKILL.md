@@ -5,7 +5,9 @@ disable-model-invocation: true
 argument-hint: "<o que a skill deve fazer>"
 allowed-tools:
   - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
+  - Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py *)
   - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
+  - Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Crie uma skill para: $ARGUMENTS
@@ -17,6 +19,7 @@ Se não houver descrição acima, pergunte o que a skill deve fazer. O destino �
 
 Os comandos do claudin são pré-aprovados só na forma exata: rode cada um **sozinho**
 (sem `cd`, `&&` ou `;`) e escreva o caminho com barras `/`.
+Use `python` no Windows; no Linux ou macOS, se `python` não existir, use `python3` no lugar, com o resto do comando igual.
 
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide choosing-features writing-for-agents

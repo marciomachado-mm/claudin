@@ -5,9 +5,11 @@ disable-model-invocation: true
 argument-hint: "<plano, decisão ou ideia>"
 allowed-tools:
   - Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
+  - Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)
 ---
 
 Carregue o protocolo (rode o comando sozinho, caminho com barras `/`):
+Use `python` no Windows; no Linux ou macOS, se `python` não existir, use `python3` no lugar, com o resto do comando igual.
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide grill-me
 ```
