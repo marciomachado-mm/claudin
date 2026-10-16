@@ -3,10 +3,47 @@
   "coverage_globs": [
     "plugins/claudin/skills/*/SKILL.md",
     "plugins/claudin/agents/*.md",
+    "plugins/claudin/knowledge/guides/*.md",
     "CLAUDE.md"
   ],
   "artifacts": {
+    "CLAUDE.md": [
+      "plugins",
+      "plugin-evals"
+    ],
+    "plugins/claudin/agents/auditor.md": [
+      "sub-agents",
+      "memory",
+      "skills"
+    ],
+    "plugins/claudin/knowledge/guides/anti-patterns.md": [
+      "claude-directory",
+      "skills",
+      "permissions",
+      "permission-modes",
+      "settings",
+      "settings-reference",
+      "sandboxing",
+      "memory",
+      "best-practices",
+      "sub-agents"
+    ],
+    "plugins/claudin/knowledge/guides/grill-me.md": [
+      "sub-agents",
+      "memory",
+      "features-overview"
+    ],
+    "plugins/claudin/knowledge/guides/writing-for-agents.md": [
+      "skills",
+      "memory",
+      "sub-agents"
+    ],
     "plugins/claudin/skills/about/SKILL.md": [],
-    "CLAUDE.md": ["plugins", "plugin-evals"]
+    "plugins/claudin/skills/audit/SKILL.md": [
+      "memory",
+      "skills"
+    ],
+    "plugins/claudin/skills/fix/SKILL.md": [],
+    "plugins/claudin/skills/grill-me/SKILL.md": []
   }
 }
