@@ -46,7 +46,7 @@ Use type hints.
 GOOD_SETTINGS = """{
   "permissions": {
     "allow": ["Edit(docs/**)", "Read(src/**)", "Bash(npm test)"],
-    "deny": ["Read(.env)", "Bash"]
+    "deny": ["Read(.env)", "Read(./secrets/**)", "Bash"]
   }
 }
 """
@@ -97,6 +97,7 @@ BAD_CASES: dict[str, Files] = {
     "PERM-001": {".claude/settings.json": _settings("deny", "Write(.env)")},
     "PERM-002": {".claude/settings.json": _settings("deny", "Bash(command:rm *)")},
     "PERM-003": {".claude/settings.json": _settings("deny", "Bash(rm -rf *)")},
+    "PERM-004": {".claude/settings.json": _settings("deny", "Read(./.env)")},
 }
 
 

@@ -313,6 +313,25 @@ def perm_content_field(t: Target) -> Iterator[tuple[Path, str]]:
 
 
 @rule(
+    "PERM-004", severity="info",
+    title="Deny de arquivo com ./ só cobre a raiz",
+    source="permissions.md",
+    evidence="Bare filenames follow gitignore semantics and match at any depth",
+)
+def perm_dot_slash_filename(t: Target) -> Iterator[tuple[Path, str]]:
+    for path, kind, entry in t.permission_rules():
+        m = RULE_RE.match(entry)
+        if not (m and kind in ("deny", "ask") and m.group("tool") in ("Read", "Edit")):
+            continue
+        spec = m.group("spec").strip()
+        name = spec[2:]
+        # Só nome de arquivo simples: './.env' sim; './src/**' e './secrets/' não.
+        if spec.startswith("./") and name and "/" not in name and "*" not in name:
+            yield path, (f"{kind}: '{entry}' casa só na raiz do projeto; se a intenção é cobrir "
+                         f"qualquer pasta (monorepo), use {m.group('tool')}({name})")
+
+
+@rule(
     "PERM-003", severity="info",
     title="deny de Bash por argumento é frágil",
     source="permissions.md",

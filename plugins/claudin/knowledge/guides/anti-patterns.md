@@ -26,7 +26,7 @@ da regra; o resto exige leitura e julgamento.
 | `settings.json` sem `permissions` | `allow` e `deny` explícitos | Desde a v2.1.283 o modo inicial no terminal e no VS Code é auto: um classificador decide. Só deny explícito garante bloqueio | `permission-modes.md` |
 | `autoMode` em settings do projeto | `~/.claude/settings.json` ou managed | O escopo de `autoMode` é usuário ou managed | `settings-reference.md` |
 | Deny ou hook `PreToolUse` como garantia absoluta | Managed settings ou sandbox para o que é crítico | Um mod com `tool.check` responde depois das regras e dos hooks e pode trocar a decisão | `permissions.md` § mods |
-| `deny: Read(./.env)` esperando cobrir o monorepo | `Read(.env)` | Com `./` a regra casa só na raiz; nome sem prefixo casa em qualquer profundidade do projeto | `permissions.md` |
+| `deny: Read(./.env)` esperando cobrir o monorepo | `Read(.env)` | Com `./` a regra casa só na raiz; nome sem prefixo casa em qualquer profundidade do projeto | `permissions.md` (PERM-004) |
 | `settings.local.json` commitado | No `.gitignore` | É override pessoal | `settings.md` |
 | Settings com comentário ou vírgula sobrando | JSON estrito | O arquivo vira Settings Error e é ignorado | `settings.md` (SET-001) |
 
