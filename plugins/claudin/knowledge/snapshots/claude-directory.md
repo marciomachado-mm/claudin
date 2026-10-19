@@ -1,4 +1,4 @@
-<!-- source: https://code.claude.com/docs/en/claude-directory.md | updated: 2026-10-16T03:17:38.984551+00:00 -->
+<!-- source: https://code.claude.com/docs/en/claude-directory.md | updated: 2026-10-19T09:27:37.028001+00:00 -->
 > ## Documentation Index
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
@@ -291,7 +291,7 @@ Report findings with severity ratings and remediation steps.`
           note: commandsNote,
           when: <>User types <C>/command-name</C></>,
           description: <>A file at <C>commands/deploy.md</C> creates <C>/deploy</C> the same way a skill at <C>skills/deploy/SKILL.md</C> does, and both can be auto-invoked by Claude. Skills use a directory with SKILL.md, letting you bundle reference docs, templates, or scripts alongside the prompt.</>,
-          tips: [<>Use <C>$ARGUMENTS</C> in the file to accept parameters: <C>/fix-issue 123</C></>, 'If a skill and command share a name, the skill takes precedence', 'New commands should usually be skills instead; commands remain supported'],
+          tips: [<>Use <C>$ARGUMENTS</C> in the file to accept parameters: <C>/fix-issue 123</C></>, 'If a skill and command share a name, the skill takes precedence', 'New commands should usually be skills instead; command files still work'],
           docsLink: '/en/skills',
           children: [{
             id: 'cmd-example',
