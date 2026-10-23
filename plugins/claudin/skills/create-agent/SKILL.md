@@ -27,7 +27,8 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide choosing-features
 
 Subagente serve para
 **isolar contexto**: começa do zero, não vê a conversa, não pergunta nada ao usuário e
-devolve um resumo. Se a tarefa precisa conversar, ou se o resultado detalhado precisa
+devolve um resumo, que nas sessões interativas chega depois: o subagente roda em segundo
+plano desde a v2.1.302 (`sub-agents.md`). Se a tarefa precisa conversar, ou se o resultado detalhado precisa
 voltar inteiro, proponha o recurso certo (skill, rule, hook) e pare aqui, a menos que o
 usuário insista.
 

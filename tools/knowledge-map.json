@@ -13,11 +13,6 @@
       "plugins",
       "plugin-evals"
     ],
-    "plugins/claudin/agents/auditor.md": [
-      "sub-agents",
-      "memory",
-      "skills"
-    ],
     "plugins/claudin/knowledge/guides/anti-patterns.md": [
       "claude-directory",
       "skills",
@@ -48,7 +43,8 @@
     "plugins/claudin/skills/about/SKILL.md": [],
     "plugins/claudin/skills/audit/SKILL.md": [
       "memory",
-      "skills"
+      "skills",
+      "sub-agents"
     ],
     "plugins/claudin/skills/create-agent/SKILL.md": [
       "sub-agents",

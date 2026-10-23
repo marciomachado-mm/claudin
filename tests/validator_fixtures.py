@@ -56,6 +56,7 @@ GOOD_PROJECT: Files = {
     ".claude/agents/reviewer.md": GOOD_AGENT,
     ".claude/rules/python.md": GOOD_RULE,
     ".claude/rules/sem-frontmatter.md": "Sempre rode os testes.\n",
+    "src/CLAUDE.md": "# src\n\nCódigo da aplicação. Testes em `tests/`.\n",
     ".claude/settings.json": GOOD_SETTINGS,
 }
 
@@ -91,6 +92,10 @@ BAD_CASES: dict[str, Files] = {
     "AGENT-007": {
         ".claude-plugin/plugin.json": '{"name": "demo"}\n',
         "agents/x.md": _agent("permissionMode: acceptEdits\n"),
+    },
+    "INSTR-001": {
+        ".claude/rules/placeholder.md": "Regra sem paths, carrega sempre.\n",
+        "services/api/CLAUDE.md": "# API\n\n" + ("Instrução longa demais. " * 1800),
     },
     "RULE-001": {".claude/rules/r.md": "---\npaths: src/**\nalwaysApply: true\n---\n\nRegra.\n"},
     "SET-001": {".claude/settings.json": '{\n  // comentário\n  "model": "sonnet",\n}\n'},

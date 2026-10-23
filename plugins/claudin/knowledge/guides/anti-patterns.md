@@ -23,7 +23,7 @@ da regra; o resto exige leitura e julgamento.
 | `deny: Bash(rm -rf *)` tratado como proteção | Sandbox para isolamento real; deny como atrito | Padrões de Bash com argumentos são frágeis e contornáveis. O sandbox roda em macOS, Linux e WSL2; no Windows nativo os comandos rodam sem sandbox | `permissions.md` (PERM-003), `sandboxing.md` |
 | `deny: Read(path)` esperando bloquear toda escrita | Somar `Edit(path)` ao deny | Deny de `Read` bloqueia Edit (v2.1.208+) e Write (v2.1.228+) no mesmo caminho, mas não NotebookEdit | `permissions.md` |
 | `.claudeignore` para esconder arquivos | `Read(.env)`, `Read(secrets/**)` em deny | O Claude Code não lê `.claudeignore` | `permissions.md` |
-| `settings.json` sem `permissions` | `allow` e `deny` explícitos | Desde a v2.1.283 o modo inicial no terminal e no VS Code é auto: um classificador decide. Só deny explícito garante bloqueio | `permission-modes.md` |
+| `settings.json` sem `permissions` | `allow` e `deny` explícitos | Desde a v2.1.283 o modo inicial no terminal e no VS Code é auto: um classificador decide. `claude -p` e o Agent SDK começam em Manual desde a v2.1.302. Em qualquer modo, só deny explícito garante bloqueio | `permission-modes.md` |
 | `autoMode` em settings do projeto | `~/.claude/settings.json` ou managed | O escopo de `autoMode` é usuário ou managed | `settings-reference.md` |
 | Deny ou hook `PreToolUse` como garantia absoluta | Managed settings ou sandbox para o que é crítico | Um mod com `tool.check` responde depois das regras e dos hooks e pode trocar a decisão | `permissions.md` § mods |
 | `deny: Read(./.env)` esperando cobrir o monorepo | `Read(.env)` | Com `./` a regra casa só na raiz; nome sem prefixo casa em qualquer profundidade do projeto | `permissions.md` (PERM-004) |
@@ -59,6 +59,8 @@ da regra; o resto exige leitura e julgamento.
 | `disallowedTools: Bash(git push *)` esperando bloquear só o push | `permissions.deny` | Especificador em `disallowedTools` remove a tool inteira | `sub-agents.md` (AGENT-005) |
 | `model:` fixo em todo agente | Fixar só onde o trabalho é mecânico; omitir para herdar | O frontmatter ganha do modelo da conversa: fixar `sonnet` rebaixa o agente numa sessão Opus. O critério é quanto julgamento a saída exige, não se o agente só lê | `sub-agents.md` § Choose a model |
 | Campo em snake_case (`max_turns`) | camelCase exato (`maxTurns`) | Campo desconhecido é ignorado sem erro | `sub-agents.md` (AGENT-003) |
-| `autoCompactWindow: 200k` | `200000` | `200k` vira 200, fica fora da faixa e é ignorado (v2.1.296+) | `sub-agents.md` (AGENT-004) |
+| `autoCompactWindow: 200k` | `200000` | `200k` vira 200, fica fora da faixa e é ignorado (v2.1.296+). Armadilha: a variável `CLAUDE_CODE_AUTO_COMPACT_WINDOW` aceita `200k` desde a v2.1.304, o frontmatter não | `sub-agents.md` (AGENT-004), `env-vars.md` |
 | Agente de plugin dependendo de `hooks`, `mcpServers` ou `permissionMode` | Copiar o agente para `.claude/agents/` | Esses campos são ignorados em agente de plugin | `sub-agents.md` (AGENT-007) |
+| `CLAUDE.md` de subpasta ou rule com `paths:` acima de 40.000 caracteres | Dividir em rules menores | Arquivo que carrega sob demanda acima do limite só entra pelo começo (janela de 200K; maior com 1M), desde a v2.1.309 | `memory.md` (INSTR-001) |
+| Fluxo que precisa do resultado de um subagente no mesmo turno | Skill com `context: fork` e `background: false`, ou fazer o trabalho no thread principal | Nas sessões interativas o subagente chamado da conversa roda em segundo plano e o Claude não espera, desde a v2.1.302 (salvo com fork mode desligado) | `sub-agents.md` |
 | Descrições de agentes somando mais de 15.000 tokens | Encurtar as descriptions, detalhe no corpo | Aviso no startup e roteamento pior | `sub-agents.md` |

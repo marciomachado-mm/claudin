@@ -34,24 +34,41 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/validate.py <caminho> --json
 ```
 
 Código 1 só significa que há achado `error`; a saída vale. Código 2 significa que não há
-`.claude/` nem plugin: siga só com a leitura crítica do `CLAUDE.md`/`AGENTS.md`.
+estrutura Claude Code nenhuma no caminho.
 
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide anti-patterns writing-for-agents
 ```
 
-## 3. Delegue a leitura crítica
+## 3. Leitura crítica
 
-Chame a tool Agent com `subagent_type` igual a `claudin:auditor`. O auditor não consegue
-ler a pasta do plugin, então o prompt leva tudo:
+Feita aqui mesmo, sem subagente: nas sessões interativas o subagente roda em segundo plano
+e o resultado chegaria fora deste fluxo (`sub-agents.md`, v2.1.302).
 
-- o caminho absoluto do alvo e se é projeto ou plugin
-- a saída JSON do validador, completa
-- o texto integral dos dois guias, como veio do comando acima
+1. Mapeie o alvo: `CLAUDE.md` e `AGENTS.md` (raiz e subpastas), `CLAUDE.local.md`,
+   `.claude/` (skills, agents, rules, commands, hooks, settings), `.mcp.json`, `.gitignore`.
+   Em plugin: `skills/`, `agents/`, `hooks/`, `.mcp.json`. Leia cada arquivo do mapa
+2. Os achados do validador já vêm explicados: não os repita, só use a severidade deles
+3. Procure o que o validador não decide, com o catálogo de anti-padrões na mão:
+   - skill com efeito colateral sem `disable-model-invocation: true`
+   - description vaga, que não diz quando usar
+   - agente sem `tools:` ou com tools além do que o corpo usa
+   - `model:` fixo onde o trabalho exige julgamento
+   - CLAUDE.md sem comandos, longo, ou repetindo o que o ambiente já diz
+   - rule sem `paths:` que só vale para uma área
+   - `settings.local.json` fora do `.gitignore`; settings sem `permissions`
+   - instrução que contradiz outra, ou que o modelo já segue sozinho
+4. Estime o contexto fixo por sessão (cerca de 4 caracteres por token): CLAUDE.md ou
+   AGENTS.md carregado, rules sem `paths:`, descriptions de skills chamáveis pelo Claude,
+   descriptions de agentes, servidores em `.mcp.json`. É estimativa: não inclui o prompt do
+   sistema nem skills sincronizadas da claude.ai
 
-## 4. Confira o que ficou sem fonte
+Pronto quando cada arquivo do mapa foi lido e cada item da lista acima foi checado.
 
-Para cada item que o auditor marcou como "não verificado", busque na doc oficial:
+## 4. Confira na doc antes de afirmar
+
+Todo comportamento do Claude Code que você for afirmar e que não esteja nos guias, busque
+na doc oficial antes. Não afirme de memória:
 
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py docs "<termo ou regex>"
@@ -59,8 +76,8 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py docs "<termo ou regex>"
 
 Para ler o contexto de um resultado, use
 `python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py section <página> <linha>`, não o Read: a pasta
-do plugin fica fora do projeto. Achou e confirma: cite `página.md:linha` como fonte. Achou e contradiz: corrija o achado.
-Não achou: mantenha em "não verificado".
+do plugin fica fora do projeto. Achou e confirma: cite `página.md:linha` como fonte. Achou
+e contradiz: corrija o achado. Não achou: o item vai para "não verificado".
 
 ## 5. Apresente o relatório
 

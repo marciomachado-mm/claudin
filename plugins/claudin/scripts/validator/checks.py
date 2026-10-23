@@ -39,6 +39,7 @@ RULE_RE = re.compile(r"^(?P<tool>[A-Za-z_][\w]*)\((?P<spec>.*)\)$")
 SKILL_DESCRIPTION_LIMIT = 1536
 AGENT_NAME_LIMIT = 256
 AUTO_COMPACT_RANGE = (100_000, 1_000_000)
+ON_DEMAND_CHAR_LIMIT = 40_000
 
 
 def _parsed(files: list[MarkdownFile]) -> Iterator[MarkdownFile]:
@@ -228,7 +229,7 @@ def agent_disallowed_specifier(t: Target) -> Iterator[tuple[Path, str]]:
     "AGENT-006", severity="warn",
     title="tools sem especificador de comando",
     source="sub-agents.md",
-    evidence="Both fields accept MCP server-level patterns in addition to exact tool names",
+    evidence="The `tools` and `disallowedTools` fields also take entries for a whole MCP server",
 )
 def agent_tools_specifier(t: Target) -> Iterator[tuple[Path, str]]:
     for f in _parsed(t.agents):
@@ -264,6 +265,25 @@ def rule_fields(t: Target) -> Iterator[tuple[Path, str]]:
     for f in _parsed(t.rules):
         if unknown := sorted(set(f.fm.fields) - RULE_FIELDS):
             yield f.path, f"campo(s) sem efeito em rule: {', '.join(unknown)}"
+
+
+@rule(
+    "INSTR-001", severity="warn",
+    title="Instrução sob demanda cabe no limite de tamanho",
+    source="memory.md",
+    evidence="is over a per-file size limit, Claude receives only the start of it",
+    since="2.1.309",
+)
+def instruction_size(t: Target) -> Iterator[tuple[Path, str]]:
+    # 40.000 caracteres é o limite da janela de 200K, o menor; com janela de 1M é maior.
+    limit = ON_DEMAND_CHAR_LIMIT
+    files = list(t.subdir_instruction_files)
+    files += [f.path for f in _parsed(t.rules) if "paths" in f.fm.fields]
+    for path in files:
+        size = len(path.read_text(encoding="utf-8", errors="replace"))
+        if size > limit:
+            yield path, (f"{size} caracteres: acima de {limit} o Claude recebe só o começo (janela de 200K) "
+                         "e o resto só se ler o arquivo; divida em rules menores")
 
 
 # --- Settings e permissões ---------------------------------------------------------

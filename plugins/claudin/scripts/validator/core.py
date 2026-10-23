@@ -89,7 +89,8 @@ class Target:
         return self.root if self.is_plugin else self.root / ".claude"
 
     def exists(self) -> bool:
-        return self.is_plugin or self.base.is_dir()
+        has_instructions = any((self.root / n).is_file() for n in ("CLAUDE.md", "AGENTS.md"))
+        return self.is_plugin or self.base.is_dir() or has_instructions
 
     @cached_property
     def skill_dirs(self) -> list[Path]:
@@ -109,6 +110,20 @@ class Target:
     def rules(self) -> list[MarkdownFile]:
         rules = self.base / "rules"
         return [load_markdown(p) for p in sorted(rules.rglob("*.md"))] if rules.is_dir() else []
+
+    @cached_property
+    def subdir_instruction_files(self) -> list[Path]:
+        """CLAUDE.md e CLAUDE.local.md de subpastas: carregam sob demanda (memory.md)."""
+        if self.is_plugin:
+            return []
+        skip = {".git", "node_modules", ".venv", "venv", "dist", "build", "__pycache__"}
+        found: list[Path] = []
+        for name in ("CLAUDE.md", "CLAUDE.local.md"):
+            for path in self.root.rglob(name):
+                rel = path.relative_to(self.root).parts
+                if len(rel) > 1 and not skip.intersection(rel) and rel[0] != ".claude":
+                    found.append(path)
+        return sorted(found)
 
     @cached_property
     def settings_files(self) -> list[Path]:

@@ -48,7 +48,7 @@ def main() -> int:
 
     target = Target(Path(args.path).resolve())
     if not target.exists():
-        print(f"Nada para validar em {target.root}: sem .claude/ nem .claude-plugin/plugin.json")
+        print(f"Nada para validar em {target.root}: sem CLAUDE.md, AGENTS.md, .claude/ nem .claude-plugin/plugin.json")
         return 2
 
     findings = run(target)

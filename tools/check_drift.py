@@ -26,6 +26,7 @@ import json
 import re
 import subprocess
 import sys
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -45,7 +46,12 @@ CLAIM_PATTERNS = (
     re.compile(rf"\bv{VERSION} or later"),
     re.compile(rf"min-version:\s*{VERSION}"),  # marcador antigo, abandonado ~v2.1.250
 )
+# O changelog já mudou de formato uma vez sem aviso: de blocos <Update label="X"> para
+# títulos **X**. Os dois são lidos; changelog sem release reconhecida vira alerta no
+# relatório, para o detector não silenciar como aconteceu com o min-version.
 UPDATE_RE = re.compile(r'<Update label="(\d+\.\d+\.\d+)"[^>]*>(.*?)</Update>', re.S)
+RELEASE_HEADING_RE = re.compile(r"^\*\*(\d+\.\d+\.\d+)\*\*\s*$", re.M)
+LINK_RE = re.compile(r"\]\([^)]*\)")
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -84,15 +90,58 @@ def added_lines(repo: Path, commit: str, rel_path: str) -> list[str]:
     return lines
 
 
+def changelog_releases(text: str) -> list[tuple[str, str]]:
+    """(versão, corpo) de cada release, em qualquer um dos dois formatos conhecidos."""
+    releases = UPDATE_RE.findall(text)
+    if releases:
+        return releases
+    parts = RELEASE_HEADING_RE.split(text)
+    return [(parts[i], parts[i + 1]) for i in range(1, len(parts) - 1, 2)]
+
+
 def changelog_added(text: str, aligned: str) -> dict[str, list[str]]:
     """Release -> itens da seção Added, só para releases acima do marco."""
     result: dict[str, list[str]] = {}
-    for version, body in UPDATE_RE.findall(text):
+    for version, body in changelog_releases(text):
         if version_key(version) <= version_key(aligned):
             continue
-        section = re.search(r"\*\*Added\*\*(.*?)(?:\*\*\w+\*\*|<Expandable|$)", body, re.S)
+        section = re.search(r"\*\*Added\*\*(.*?)(?:\*\*[A-Z]\w+\*\*|<Expandable|$)", body, re.S)
         items = re.findall(r"^\s*\*\s+(.+)$", section.group(1), re.M) if section else []
         result[version] = items
+    return result
+
+
+def old_text(repo: Path, commit: str, rel_path: str) -> str:
+    try:
+        return git(repo, "show", f"{commit}:{rel_path}")
+    except subprocess.CalledProcessError:
+        return ""  # snapshot que não existia no alinhamento
+
+
+def late_claims(name: str, old: str, new: str, aligned: str) -> list[Claim]:
+    """Afirmações datadas até o marco que surgiram depois do alinhamento.
+
+    Comparar linhas do diff não serve: quando a doc é reformatada (links, componentes),
+    toda linha muda e centenas de afirmações antigas parecem novas. Uma afirmação é nova
+    quando a sua versão passou a aparecer mais vezes na página. Entre as linhas dessa
+    versão, mostra as que não existiam antes (ignorando a forma dos links).
+    """
+    def norm(line: str) -> str:
+        return LINK_RE.sub("]", line).strip()
+
+    old_claims = find_claims(name, old.splitlines())
+    new_claims = find_claims(name, new.splitlines())
+    old_count = Counter(c.version for c in old_claims)
+    new_count = Counter(c.version for c in new_claims)
+    old_lines = {norm(c.line) for c in old_claims}
+    result: list[Claim] = []
+    for version, count in new_count.items():
+        grew = count - old_count.get(version, 0)
+        if grew <= 0 or version_key(version) > version_key(aligned):
+            continue
+        candidates = [c for c in new_claims if c.version == version]
+        fresh = [c for c in candidates if norm(c.line) not in old_lines]
+        result.extend((fresh or candidates)[:grew])
     return result
 
 
@@ -104,6 +153,7 @@ class DriftReport:
     late_claims: list[Claim] = field(default_factory=list)
     changed_snapshots: dict[str, int] = field(default_factory=dict)
     releases: dict[str, list[str]] = field(default_factory=dict)
+    changelog_unreadable: bool = False
     impacted: dict[str, list[str]] = field(default_factory=dict)
 
 
@@ -133,19 +183,19 @@ def build_report(repo: Path) -> DriftReport:
         text = path.read_text(encoding="utf-8")
         if name == "changelog":
             report.releases = changelog_added(text, aligned)
+            report.changelog_unreadable = not changelog_releases(text)
             continue
         for claim in find_claims(name, text.splitlines()):
             if version_key(claim.version) > version_key(aligned):
                 report.new_claims.append(claim)
         if commit:
-            added = added_lines(repo, commit, f"{SNAPSHOTS_REL}/{path.name}")
+            rel = f"{SNAPSHOTS_REL}/{path.name}"
+            added = added_lines(repo, commit, rel)
             # Linha 1 é o header com a data de atualização: não é conteúdo.
             content = [ln for ln in added if not ln.startswith("<!-- source:")]
             if content:
                 report.changed_snapshots[name] = len(content)
-            for claim in find_claims(name, content):
-                if version_key(claim.version) <= version_key(aligned):
-                    report.late_claims.append(claim)
+            report.late_claims.extend(late_claims(name, old_text(repo, commit, rel), text, aligned))
 
     touched = {c.snapshot for c in report.new_claims + report.late_claims} | set(report.changed_snapshots)
     for artifact, sources in artifact_sources(repo).items():
@@ -187,7 +237,10 @@ def render(report: DriftReport) -> str:
     out.append("")
 
     out.extend(["## 4. Novidades do changelog (para o radar)", ""])
-    if not report.releases:
+    if report.changelog_unreadable:
+        out.append("**ALERTA: nenhuma release reconhecida no changelog. O formato mudou de novo; "
+                   "ajuste `changelog_releases` antes de confiar nesta seção.**")
+    elif not report.releases:
         out.append("Nenhuma release acima do marco.")
     for version, items in sorted(report.releases.items(), key=lambda kv: version_key(kv[0]), reverse=True):
         out.append(f"### v{version}")

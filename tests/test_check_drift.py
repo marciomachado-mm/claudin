@@ -139,6 +139,55 @@ class DriftReportTest(unittest.TestCase):
                          ["não declarado no knowledge-map: skills/novo.md"])
 
 
+NEW_FORMAT_CHANGELOG = """# Claude Code changelog
+
+**2.1.309**
+
+October 22, 2026
+
+**Added**
+
+* Added a thing
+
+**Changed**
+
+* Changed another thing
+
+**2.1.299**
+
+**Added**
+
+* Old
+"""
+
+
+class FormatChangeTest(unittest.TestCase):
+    """As duas vezes em que as docs mudaram de forma e o detector silenciou."""
+
+    def test_new_changelog_format_is_read(self) -> None:
+        self.assertEqual(check_drift.changelog_added(NEW_FORMAT_CHANGELOG, "2.1.301"),
+                         {"2.1.309": ["Added a thing"]})
+
+    def test_unreadable_changelog_is_flagged(self) -> None:
+        self.assertEqual(check_drift.changelog_releases("# changelog sem releases\n"), [])
+
+    def test_fetch_docs_reads_both_formats(self) -> None:
+        import fetch_docs
+        self.assertEqual(fetch_docs.changelog_versions(NEW_FORMAT_CHANGELOG), ["2.1.309", "2.1.299"])
+        self.assertEqual(fetch_docs.changelog_versions(CHANGELOG), ["2.1.301", "2.1.299"])
+
+    def test_reformatted_page_is_not_late(self) -> None:
+        old = "Feature X. Requires Claude Code v2.1.290 or later. See [docs](/docs/en/x).\n"
+        new = "Feature X. Requires Claude Code v2.1.290 or later. See [docs](/docs/en/x.md).\n"
+        self.assertEqual(check_drift.late_claims("p", old, new, "2.1.299"), [])
+
+    def test_new_feature_dated_below_marker_is_late(self) -> None:
+        old = "Feature X. Requires Claude Code v2.1.290 or later.\n"
+        new = old + "| `autoCompactWindow` | Requires Claude Code v2.1.296 or later |\n"
+        late = check_drift.late_claims("p", old, new, "2.1.299")
+        self.assertEqual([c.version for c in late], ["2.1.296"])
+
+
 class RealRepoCoverageTest(unittest.TestCase):
     def test_this_repo_coverage_is_complete(self) -> None:
         self.assertEqual(check_drift.coverage_problems(REPO_ROOT), [])

@@ -51,7 +51,8 @@ CORE: tuple[str, ...] = (
 )
 
 HEADER_RE = re.compile(r"^<!-- source: (?P<url>\S+) \| updated: (?P<updated>\S+) -->\n")
-VERSION_LABEL_RE = re.compile(r'<Update label="(\d+\.\d+\.\d+)"')
+# Dois formatos de release no changelog: <Update label="X"> (antigo) e **X** (desde out/2026).
+VERSION_LABEL_RE = re.compile(r'<Update label="(\d+\.\d+\.\d+)"|^\*\*(\d+\.\d+\.\d+)\*\*\s*$', re.M)
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -76,7 +77,7 @@ def fetch(url: str, timeout: float = 30.0) -> str:
 
 
 def changelog_versions(text: str) -> list[str]:
-    return VERSION_LABEL_RE.findall(text)
+    return [old or new for old, new in VERSION_LABEL_RE.findall(text)]
 
 
 def load_state() -> dict[str, str]:

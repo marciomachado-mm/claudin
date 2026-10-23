@@ -25,7 +25,10 @@ dúvida, a doc ganha.
 - **Skill ou subagente?** Skill roda no contexto principal e vê a conversa. Subagente
   começa do zero, não vê a conversa, não pode perguntar nada ao usuário
   (`AskUserQuestion` é removida, `sub-agents.md`) e devolve só um resumo. Use subagente
-  para isolar contexto, não para conversar
+  para isolar contexto, não para conversar. Nas sessões interativas (terminal, VS Code,
+  app desktop), o subagente chamado da conversa roda em segundo plano e o resultado chega
+  depois, desde a v2.1.302. Se o fluxo precisa do resultado no mesmo turno, use uma skill
+  com `context: fork` e `background: false` (`sub-agents.md`)
 - **Instrução ou hook?** Instrução é seguida na maior parte das vezes; hook roda sempre.
   O que não pode falhar vira hook
 - **Pergunta rápida sobre a conversa:** `/btw`, não subagente (`sub-agents.md`)
