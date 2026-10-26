@@ -47,6 +47,9 @@ Todo arquivo dos `coverage_globs` precisa estar em `tools/knowledge-map.json`.
 
 ## Comandos
 
+Os comandos usam `python`, que é o nome no Windows. Na VM 101 e em outros Linux sem
+`python`, troque por `python3`.
+
 ```bash
 claude plugin validate .
 python -m unittest discover -s tests -v
