@@ -35,6 +35,11 @@
       "memory",
       "features-overview"
     ],
+    "plugins/claudin/knowledge/guides/usage-evidence.md": [
+      "claude-directory",
+      "settings-reference",
+      "env-vars"
+    ],
     "plugins/claudin/knowledge/guides/writing-for-agents.md": [
       "skills",
       "memory",
@@ -42,6 +47,7 @@
     ],
     "plugins/claudin/skills/about/SKILL.md": [],
     "plugins/claudin/skills/audit/SKILL.md": [
+      "claude-directory",
       "memory",
       "skills",
       "sub-agents"

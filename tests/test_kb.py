@@ -40,12 +40,14 @@ class KbTest(unittest.TestCase):
                     with self.subTest(skill=skill.parent.name, guide=name):
                         self.assertIn(name, guides)
 
-    def test_skills_using_kb_preapprove_it(self) -> None:
+    def test_skills_preapprove_every_script_they_use(self) -> None:
+        # Comando citado sem pré-aprovação pede permissão no uso e falha em claude -p.
         for skill in PLUGIN.glob("skills/*/SKILL.md"):
             text = skill.read_text(encoding="utf-8")
-            if "kb.py" in text:
-                with self.subTest(skill=skill.parent.name):
-                    self.assertIn("Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)", text)
+            for script in sorted(set(re.findall(r"\$\{CLAUDE_PLUGIN_ROOT\}/scripts/(\w+\.py)", text))):
+                for python in ("python", "python3"):
+                    with self.subTest(skill=skill.parent.name, script=script, python=python):
+                        self.assertIn(f"Bash({python} ${{CLAUDE_PLUGIN_ROOT}}/scripts/{script} *)", text)
 
 
 if __name__ == "__main__":

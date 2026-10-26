@@ -23,6 +23,9 @@ Repo de desenvolvimento do plugin `claudin` (claud(e) + (plug)in). Este repo é 
   `Bash(python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py *)`. A skill manda rodar cada comando
   sozinho e com barras `/`, porque só a forma exata casa com a pré-aprovação. Template vai
   dentro do próprio `SKILL.md`
+- `scripts/sessions.py` lê o histórico de sessões do usuário. Só roda com permissão, e a
+  skill nunca lê transcrição direto: só a saída mascarada do script
+  (guia `knowledge/guides/usage-evidence.md`)
 - Toda afirmação sobre o Claude Code cita a fonte (página da doc oficial)
 - Textos para o usuário em português; nomes de código em inglês
 
