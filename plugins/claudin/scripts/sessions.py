@@ -163,7 +163,8 @@ class Session:
     tools: Counter = field(default_factory=Counter)
     errors: Counter = field(default_factory=Counter)
     hook_samples: Counter = field(default_factory=Counter)  # (motivo, comando) -> vezes
-    skills: Counter = field(default_factory=Counter)
+    skills: Counter = field(default_factory=Counter)  # chamadas pela tool Skill
+    commands: Counter = field(default_factory=Counter)  # digitadas como /nome (inclui nativos)
     malformed: int = 0
     seen: Counter = field(default_factory=Counter)  # campos esperados que apareceram
 
@@ -182,7 +183,7 @@ def _user_text(session: Session, record: dict, text: str) -> None:
         session.interruptions += 1
         return
     for name in COMMAND_RE.findall(text):
-        session.skills[name.lower()] += 1
+        session.commands[name.lower()] += 1
     if record.get("isMeta") or text.startswith("<"):
         return  # contexto injetado, não fala do usuário (mas comandos já contados acima)
     session.prompts += 1
@@ -322,16 +323,24 @@ def collect(project: Path, project_dir: Path, days: int | None, current: str | N
     errors: Counter = Counter()
     hooks: Counter = Counter()
     skills: Counter = Counter()
+    commands: Counter = Counter()
     seen: Counter = Counter()
     for s in sessions:
         tools.update(s.tools)
         errors.update(s.errors)
         hooks.update(s.hook_samples)
         skills.update(s.skills)
+        commands.update(s.commands)
         seen.update(s.seen)
 
+    # Comando digitado só conta como skill se for do projeto ou de plugin (com ':'): /exit,
+    # /clear e outros nativos ficam de fora.
+    defined = defined_skills(project)
+    for name, n in commands.items():
+        if ":" in name or short_name(name) in defined:
+            skills[name] += n
     used_short = {short_name(n) for n in skills}
-    never_used = sorted(defined_skills(project) - used_short)
+    never_used = sorted(defined - used_short)
     starts = [s.start for s in sessions if s.start]
     ends = [s.end for s in sessions if s.end]
     heavy = sorted(sessions, key=lambda s: s.tokens_in, reverse=True)[:3]

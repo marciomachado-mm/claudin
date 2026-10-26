@@ -59,6 +59,7 @@ class SessionsTest(unittest.TestCase):
             {"type": "custom-title", "customTitle": "sessão principal"},
             user("Faz o deploy, por favor"),
             user("<command-name>/deploy</command-name>"),
+            user("<command-name>/exit</command-name>"),
             assistant("m1", [tool_use("t1", "Bash", command=f"rm -rf /tmp/build # senha={SECRET} em {IP}")]),
             assistant("m1", [{"type": "text", "text": "mesma mensagem, outro bloco"}]),  # usage repetido
             tool_error("t1", "BLOQUEADO pelo guard: remocao recursiva", toolDenialKind="permission-rule"),
