@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: create-project-ja-configurado
+context:
+  scaffold_script: scaffold.sh
