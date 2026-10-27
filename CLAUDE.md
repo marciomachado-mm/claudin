@@ -57,4 +57,10 @@ Os comandos usam `python`, que é o nome no Windows. Na VM 101 e em outros Linux
 claude plugin validate .
 python -m unittest discover -s tests -v
 python plugins/claudin/scripts/validate.py <caminho>
+claude plugin eval plugins/claudin --scaffold --allow-tools "Bash(python *)" "Bash(python3 *)"
 ```
+
+Sem o `--allow-tools`, as skills não rodam `kb.py` nem `validate.py` no eval: o Claude
+responde sem fonte e pede para liberar ferramentas, e os graders falham por isso, não
+pelo plugin. Evals custam chamada de modelo; para iterar num caso, use
+`--case <nome> --runs 1 --ablation none`.
