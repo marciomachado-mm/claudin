@@ -1,6 +1,6 @@
 ---
 description: "Deny Write(.env), que nunca é consultado; a correção é Edit(.env)"
-tags: [fix, permissoes]
+tags: [audit, permissoes]
 runs: 3
 max_turns: 30
 timeout_seconds: 600
