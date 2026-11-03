@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 # Cenário sem nenhum problema real: mede se o audit inventa erro onde não há.
-mkdir -p .claude/skills/release src/notas
+mkdir -p .claude/skills/release src/notas tests
 cat > 'CLAUDE.md' <<'CLAUDIN_EOF'
 # notas-cli
 
@@ -61,7 +61,25 @@ Publique a versão $ARGUMENTS.
 2. Atualize `version` no `pyproject.toml` e acrescente a seção da versão no `CHANGELOG.md`.
 3. `uv build`.
 4. Mostre o diff e os arquivos em `dist/` e espere confirmação.
-5. `git tag v$ARGUMENTS`, `git push --tags` e `uv publish`.
+5. `git add pyproject.toml CHANGELOG.md`, `git commit -m "release v$ARGUMENTS"` e `git tag -a v$ARGUMENTS -m "v$ARGUMENTS"`.
+6. `git push --follow-tags` e `uv publish`.
 
 Pronto quando a tag existe no remoto e o pacote está no PyPI.
+CLAUDIN_EOF
+cat > 'CHANGELOG.md' <<'CLAUDIN_EOF'
+# Changelog
+
+## 1.3.0
+
+- Busca por tag
+CLAUDIN_EOF
+cat > 'src/notas/__init__.py' <<'CLAUDIN_EOF'
+CLAUDIN_EOF
+cat > 'tests/test_cli.py' <<'CLAUDIN_EOF'
+from notas.cli import main
+
+
+def test_main(capsys) -> None:
+    main()
+    assert capsys.readouterr().out == "notas\n"
 CLAUDIN_EOF

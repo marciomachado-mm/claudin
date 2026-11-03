@@ -57,10 +57,25 @@ Os comandos usam `python`, que é o nome no Windows. Na VM 101 e em outros Linux
 claude plugin validate .
 python -m unittest discover -s tests -v
 python plugins/claudin/scripts/validate.py <caminho>
-claude plugin eval plugins/claudin --scaffold --allow-tools "Bash(python *)" "Bash(python3 *)"
+```
+
+## Evals
+
+Cada execução e cada voto de juiz é uma chamada de modelo e consome o limite do plano
+(`plugin-evals.md`). A suíte inteira com baseline passa de US$ 10. Por isso:
+
+- **Ao mexer numa skill ou num caso:** só os casos afetados, uma execução, sem baseline
+- **Antes de subir a `version` do `plugin.json`:** a suíte inteira, sem baseline
+- **Baseline (`--ablation with-without`):** só quando a pergunta for quanto o plugin ajuda
+
+```bash
+# dia a dia
+claude plugin eval plugins/claudin --case <nome> --runs 1 --ablation none --scaffold --allow-tools "Bash(python *)" "Bash(python3 *)"
+# antes de publicar versão
+claude plugin eval plugins/claudin --ablation none --scaffold --allow-tools "Bash(python *)" "Bash(python3 *)"
 ```
 
 Sem o `--allow-tools`, as skills não rodam `kb.py` nem `validate.py` no eval: o Claude
 responde sem fonte e pede para liberar ferramentas, e os graders falham por isso, não
-pelo plugin. Evals custam chamada de modelo; para iterar num caso, use
-`--case <nome> --runs 1 --ablation none`.
+pelo plugin. O `--case` aceita um glob simples (`fix-*`), sem colchetes, e só o último
+`--case` vale.
