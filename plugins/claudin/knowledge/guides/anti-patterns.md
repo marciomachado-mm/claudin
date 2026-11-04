@@ -36,7 +36,7 @@ da regra; o resto exige leitura e julgamento.
 | Anti-padrão | Correto | Por quê | Fonte |
 |---|---|---|---|
 | CLAUDE.md longo com instrução que só vale para uma área | Rule em `.claude/rules/` com `paths:` | Rule com `paths:` só carrega quando o Claude lê ou edita arquivo correspondente; CLAUDE.md carrega sempre | `memory.md` |
-| CLAUDE.md sem comandos de build, teste e execução | Seção de comandos | É o que o Claude mais precisa para trabalhar sozinho | `best-practices.md` |
+| CLAUDE.md sem comandos de build, teste e execução | Seção de comandos, ou ponteiro explícito para onde eles estão: `@README.md` (import, carrega junto) ou uma linha que nomeia o arquivo e a seção ("comandos em `README.md#Comandos`"). Com ponteiro para um arquivo que tem os comandos, não é achado: copiar duplica e as duas cópias divergem | É o que o Claude mais precisa para trabalhar sozinho | `best-practices.md`; import: `memory.md` |
 | Rule com frontmatter que não faz parse | Corrigir o YAML; conferir com `claude --debug` | O frontmatter é ignorado e a rule carrega em **toda** sessão, sem erro visível | `memory.md` (FM-001) |
 | Campo além de `paths` em rule | Só `paths` | Os outros são ignorados | `claude-directory.md` (RULE-001) |
 | Instrução que o modelo já segue sozinho | Apagar | Custa contexto e não muda nada (ver `writing-for-agents.md`, no-op) | — |

@@ -12,7 +12,9 @@ allowed-tools:
 
 Crie a estrutura Claude Code do projeto em: $ARGUMENTS
 
-Sem caminho acima, pergunte onde criar. Se a pasta já tem `.claude/` ou `CLAUDE.md`, não
+Sem caminho acima, use o alvo que o usuário já deu na conversa (um caminho, ou "aqui" e
+"neste repo", que são o diretório atual) e diga qual caminho resolveu; sem alvo nenhum,
+pergunte onde criar. Se a pasta já tem `.claude/` ou `CLAUDE.md`, não
 sobrescreva: ofereça `/claudin:audit` e `/claudin:fix` e pare, a menos que o usuário
 peça para completar o que falta.
 

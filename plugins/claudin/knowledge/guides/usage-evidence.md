@@ -20,7 +20,7 @@ transcrições do projeto em `~/.claude/projects/<projeto>/` e devolve só agreg
 |---|---|---|
 | `skills.nunca_usadas` | Skill do projeto sem nenhuma invocação na janela | Se o Claude pode chamá-la, ela custa contexto em todo turno sem uso: candidata a `disable-model-invocation: true` ou remoção. Confirme com o usuário: pode ser rara e importante |
 | `skills.usadas` com muito uso | Fluxo central do projeto | Prioridade alta para qualquer problema nessa skill |
-| `hooks` com o mesmo motivo várias vezes | Bloqueio recorrente | Leia os exemplos: comando inofensivo (heredoc, script, `/tmp`) é falso positivo do hook. Correção: estreitar o padrão do hook, ou checar o comando de fato e não o texto inteiro |
+| `hooks` com o mesmo motivo várias vezes | Bloqueio recorrente | Primeiro, de onde vem o hook: procure o motivo nos hooks do repo auditado (`.claude/settings.json`, `.claude/settings.local.json`). Se não estiver lá, ele vem de `~/.claude/settings.json`, de um plugin (`hooks/hooks.json`) ou de outro repo (`hooks.md`): o achado diz qual arquivo corrigir e não entra no `/claudin:fix` deste repo. Depois, leia os exemplos. Heredoc que alimenta um shell (`bash <<EOF`, `ssh host bash <<EOF`) executa o que vem dentro: o bloqueio é perigo real, não falso positivo. Heredoc ou string que só vira texto (conteúdo de arquivo, mensagem de commit, argumento de `python -c`) bloqueado por palavra perigosa no texto é falso positivo. Correção do falso positivo: estreitar o padrão do hook, ou checar o comando de fato e não o texto inteiro |
 | `erros_por_causa.permissao_negada` alto | Regra de permissão travando trabalho legítimo | Candidata a `allow` específico, se o comando for seguro |
 | `erros_por_causa.recusado_pelo_usuario` | O usuário disse não a uma ação | Instrução que leva o Claude a propor o que o usuário não quer: revisar CLAUDE.md ou rule |
 | `erros_por_causa.sintaxe_shell` | Aspas aninhadas, heredoc quebrado | Nota no CLAUDE.md (preferir arquivo de script a heredoc longo, `ssh host 'bash -s' < script`) |
@@ -28,7 +28,7 @@ transcrições do projeto em `~/.claude/projects/<projeto>/` e devolve só agreg
 | `erros_por_causa.rede_ssh` | Host fora do ar ou chave | Problema de ambiente, não de configuração; só registre |
 | `erros_por_causa.classificador_auto` | O modo auto bloqueou | Ação que precisa de regra explícita, ou que não deveria ser feita |
 | `sessoes_pesadas` com muitas horas ou erros de API | Sessão longa demais | Recomendar `/compact` mais cedo, dividir o trabalho em sessões, e `/usage` para ver onde o consumo vai |
-| `sinais_de_confusao` alto | O usuário pediu explicação várias vezes | Rever a rule ou o trecho do CLAUDE.md sobre estilo de explicação |
+| `sinais_de_confusao` sobre `totais.prompts` | O usuário pediu explicação de novo ("não entendi", "pera", "como assim") | Julgue pela proporção, não pela contagem, e cite os dois números. Até ~2% dos prompts é ruído (o padrão de texto pega "pera" em qualquer uso); acima de ~5%, rever a rule ou o trecho do CLAUDE.md sobre estilo de explicação. Os cortes são heurística do claudin, não da doc |
 | `nao_verificado` não vazio | O formato das transcrições pode ter mudado | Diga isso ao usuário: os números afetados podem estar zerados |
 
 ## Ressalvas que vão no relatório

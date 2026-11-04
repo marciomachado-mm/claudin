@@ -22,8 +22,11 @@ Use `python` no Windows; no Linux ou macOS, se `python` não existir, use `pytho
 Auditar o repositório errado gera um relatório que parece válido, então o alvo precisa ser
 explícito:
 
-- **Nada acima:** pergunte ao usuário qual caminho auditar, oferecendo o diretório atual
-  como uma das opções. Só siga com a resposta
+- **Nada acima, mas o usuário já nomeou o alvo na conversa** ("audite este repo", "o
+  market_data", um caminho): use esse alvo e diga qual caminho resolveu. "Este repo" e
+  "aqui" são o diretório atual
+- **Nada acima nem na conversa:** pergunte ao usuário qual caminho auditar, oferecendo o
+  diretório atual como uma das opções. Só siga com a resposta
 - **Caminho inexistente ou que não é pasta:** diga isso e pare
 - **Sem `CLAUDE.md`, `AGENTS.md` e `.claude/`:** não há estrutura para auditar. Diga qual
   sinal de projeto encontrou (`package.json`, `pyproject.toml`, `go.mod`...) e pare

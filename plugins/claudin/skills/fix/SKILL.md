@@ -17,8 +17,10 @@ você ter visto e aprovado.
 
 ## 1. Alvo
 
-Sem caminho acima, pergunte qual repositório corrigir; o diretório atual só vale se o
-usuário o escolher. Caminho inexistente: diga e pare.
+Sem caminho acima, use o alvo que o usuário já deu na conversa (um caminho, o nome do
+repo, ou "este repo", que é o diretório atual; ou o caminho da auditoria feita aqui) e diga
+qual caminho resolveu. Sem alvo nenhum, pergunte qual repositório corrigir; o diretório
+atual só vale se o usuário o escolher. Caminho inexistente: diga e pare.
 
 ## 2. Achados
 
