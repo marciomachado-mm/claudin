@@ -1,4 +1,4 @@
-"""Garante que o laboratório privado nunca entra no repositório público."""
+"""Garante que a pasta local `lab/` nunca entra no repositório."""
 
 from __future__ import annotations
 

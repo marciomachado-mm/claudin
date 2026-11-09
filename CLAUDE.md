@@ -1,20 +1,17 @@
 # claudin
 
-Repo de desenvolvimento do plugin `claudin` (claud(e) + (plug)in). Este repo é a
-**oficina**: aqui se mantém o plugin. O que é instalado nas máquinas é só
-`plugins/claudin/`.
+Plugin `claudin` (claud(e) + (plug)in) e o marketplace dele. O que é instalado nas
+máquinas é só `plugins/claudin/`.
 
 ## Layout
 
 - `plugins/claudin/`: o plugin distribuído. Tudo que estiver aqui vai para quem instala
 - `.claude-plugin/marketplace.json`: este repo é também o marketplace do plugin
+- `tools/`: baixa as docs oficiais (`fetch_docs.py`) e detecta defasagem (`check_drift.py`)
 - `tests/`: testes (stdlib `unittest`, sem dependências)
-- `lab/`: clone do repo **privado** `claudin_lab`. Está no `.gitignore` e nunca entra aqui
 
 ## Regras
 
-- Nada do `lab/` vai para o repo público: nem arquivo, nem trecho copiado para commit,
-  issue ou PR. O teste `tests/test_repo_hygiene.py` falha se algo do `lab/` for rastreado
 - Código dentro de `plugins/claudin/scripts/` usa só a biblioteca padrão do Python: a cópia
   instalada não tem venv
 - Skill do plugin roda no projeto do usuário, onde ler a pasta do plugin com Read pede
@@ -27,6 +24,8 @@ Repo de desenvolvimento do plugin `claudin` (claud(e) + (plug)in). Este repo é 
   skill nunca lê transcrição direto: só a saída mascarada do script
   (guia `knowledge/guides/usage-evidence.md`)
 - Toda afirmação sobre o Claude Code cita a fonte (página da doc oficial)
+- Exemplos em teste usam nomes genéricos e IPs de documentação (`192.0.2.x`,
+  `198.51.100.x`, `203.0.113.x`)
 - Textos para o usuário em português; nomes de código em inglês
 
 ## Validador
@@ -38,20 +37,13 @@ também falham se o trecho de `evidence` sumir do snapshot.
 
 ## Docs oficiais
 
-Snapshots em `plugins/claudin/knowledge/snapshots/` (vão junto com o plugin). Ciclo:
-
-1. `python tools/fetch_docs.py`
-2. `python tools/check_drift.py`: afirmações novas, documentadas com atraso, artefatos a
-   revisar e itens "Added" do changelog
-3. Revisar, corrigir, commitar os snapshots
-4. `python tools/check_drift.py --set-aligned <versão>`
-
-Todo arquivo dos `coverage_globs` precisa estar em `tools/knowledge-map.json`.
+Snapshots em `plugins/claudin/knowledge/snapshots/` (vão junto com o plugin). Uma Action
+semanal baixa as docs e abre um PR com o relatório de defasagem. Todo arquivo dos
+`coverage_globs` precisa estar em `tools/knowledge-map.json`.
 
 ## Comandos
 
-Os comandos usam `python`, que é o nome no Windows. No Linux e no macOS sem
-`python`, troque por `python3`.
+No Windows o nome é `python`; no Linux e no macOS sem `python`, `python3`.
 
 ```bash
 claude plugin validate .
@@ -59,23 +51,5 @@ python -m unittest discover -s tests -v
 python plugins/claudin/scripts/validate.py <caminho>
 ```
 
-## Evals
-
-Cada execução e cada voto de juiz é uma chamada de modelo e consome o limite do plano
-(`plugin-evals.md`). A suíte inteira com baseline passa de US$ 10. Por isso:
-
-- **Ao mexer numa skill ou num caso:** só os casos afetados, uma execução, sem baseline
-- **Antes de subir a `version` do `plugin.json`:** a suíte inteira, sem baseline
-- **Baseline (`--ablation with-without`):** só quando a pergunta for quanto o plugin ajuda
-
-```bash
-# dia a dia
-claude plugin eval plugins/claudin --case <nome> --runs 1 --ablation none --scaffold --allow-tools "Bash(python *)" "Bash(python3 *)"
-# antes de publicar versão
-claude plugin eval plugins/claudin --ablation none --scaffold --allow-tools "Bash(python *)" "Bash(python3 *)"
-```
-
-Sem o `--allow-tools`, as skills não rodam `kb.py` nem `validate.py` no eval: o Claude
-responde sem fonte e pede para liberar ferramentas, e os graders falham por isso, não
-pelo plugin. O `--case` aceita um glob simples (`fix-*`), sem colchetes, e só o último
-`--case` vale.
+Evals (`plugins/claudin/evals/`) consomem o limite do plano a cada execução
+(`plugin-evals.md`): rode só os casos afetados, com `--runs 1 --ablation none`.
