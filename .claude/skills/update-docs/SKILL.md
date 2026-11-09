@@ -5,7 +5,7 @@ disable-model-invocation: true
 ---
 
 Alinhe o claudin às docs oficiais. Duas perguntas guiam tudo: **o que ficou errado?** e
-**o que ficou possível?** A segunda é o que faltava no claude_expert.
+**o que ficou possível?**
 
 ## 1. Snapshots
 

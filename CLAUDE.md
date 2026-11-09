@@ -50,7 +50,7 @@ Todo arquivo dos `coverage_globs` precisa estar em `tools/knowledge-map.json`.
 
 ## Comandos
 
-Os comandos usam `python`, que é o nome no Windows. Na VM 101 e em outros Linux sem
+Os comandos usam `python`, que é o nome no Windows. No Linux e no macOS sem
 `python`, troque por `python3`.
 
 ```bash

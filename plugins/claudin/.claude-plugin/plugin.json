@@ -7,5 +7,6 @@
     "url": "https://github.com/marciomachado-mm"
   },
   "repository": "https://github.com/marciomachado-mm/claudin",
+  "license": "MIT",
   "keywords": ["claude-code", "audit", "skills", "agents", "hooks"]
 }

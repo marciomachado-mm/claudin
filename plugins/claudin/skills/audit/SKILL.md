@@ -23,7 +23,7 @@ Auditar o repositório errado gera um relatório que parece válido, então o al
 explícito:
 
 - **Nada acima, mas o usuário já nomeou o alvo na conversa** ("audite este repo", "o
-  market_data", um caminho): use esse alvo e diga qual caminho resolveu. "Este repo" e
+  meu-app", um caminho): use esse alvo e diga qual caminho resolveu. "Este repo" e
   "aqui" são o diretório atual
 - **Nada acima nem na conversa:** pergunte ao usuário qual caminho auditar, oferecendo o
   diretório atual como uma das opções. Só siga com a resposta

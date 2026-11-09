@@ -37,6 +37,10 @@ O protocolo de `/claudin:grill-me` e o vocabulário de
 [mattpocock/skills](https://github.com/mattpocock/skills), licença MIT,
 Copyright (c) Matt Pocock.
 
+## Licença
+
+[MIT](LICENSE).
+
 ## Desenvolvimento
 
 Carregar o plugin direto da pasta, só para uma sessão:

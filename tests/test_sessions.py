@@ -14,7 +14,7 @@ sys.path.insert(0, str(REPO_ROOT / "plugins" / "claudin" / "scripts"))
 import sessions  # noqa: E402
 
 SECRET = "hunter2-senha-temporaria"
-IP = "192.168.15.240"
+IP = "203.0.113.47"  # faixa reservada para documentação (RFC 5737)
 
 
 def user(text: str, ts: str = "2026-10-20T10:00:00Z", **extra: object) -> dict:
@@ -149,7 +149,7 @@ class SessionsTest(unittest.TestCase):
 
 class EdgeCasesTest(unittest.TestCase):
     def test_slug_matches_observed_rule(self) -> None:
-        self.assertEqual(sessions.project_slug(Path("C:\\GitHub\\market_data")), "C--GitHub-market-data")
+        self.assertEqual(sessions.project_slug(Path("C:\\src\\my_app")), "C--src-my-app")
 
     def test_project_dir_ignores_drive_letter_case(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
