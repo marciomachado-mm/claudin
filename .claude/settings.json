@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "claudin": {
+      "source": {
+        "source": "directory",
+        "path": "."
+      }
+    }
+  },
+  "enabledPlugins": {
+    "claudin@claudin": true
+  }
+}
