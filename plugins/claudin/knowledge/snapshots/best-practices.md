@@ -1,4 +1,4 @@
-<!-- source: https://code.claude.com/docs/en/best-practices.md | updated: 2026-11-02T19:06:55.114432+00:00 -->
+<!-- source: https://code.claude.com/docs/en/best-practices.md | updated: 2026-11-16T19:13:31.722552+00:00 -->
 > ## Documentation Index
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
@@ -11,7 +11,7 @@ Claude Code is built in a way that, in most cases, your first plain prompt in a 
 
 For example:
 
-* To let commands run safely without you approving each one, new terminal and VS Code sessions start in [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), where a classifier reviews anything risky before it runs.
+* To let commands run without you approving each one, new terminal and VS Code sessions start in [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode).
 * To keep your main conversation focused while independent work happens in parallel, Claude delegates to subagents and checks in only when it has to.
 * To keep a long session going without you managing it, your conversation is compacted automatically before the context window fills.
 
@@ -156,7 +156,7 @@ A `CLAUDE.md` that passes that test stays short:
 - Integration tests need DATABASE_URL set, see .env.example
 ```
 
-In a session, run `/context` to confirm that Claude loaded the file.
+In a session, run [`/context all`](https://code.claude.com/docs/en/commands#all-commands) to confirm that Claude loaded the file.
 
 Notice that the typecheck line is only the command. Claude needs to know the command so it can check its own work as it goes. If you also want Claude Code to *enforce* a passing typecheck before Claude finishes, that's a job for a [`Stop` hook](#enforce-the-check-with-a-stop-hook). A line like `Always typecheck before you finish` in this file works most of the time, not every time.
 
@@ -316,7 +316,7 @@ Here's the formatter rule as a `PostToolUse` hook. It runs after every `Edit` or
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "npx prettier --write --ignore-unknown \"$(jq -r '.tool_input.file_path')\"" }
+          { "type": "command", "command": "f=$(jq -r '.tool_input.file_path') && npx prettier --write --ignore-unknown \"$f\"" }
         ]
       }
     ]
@@ -434,14 +434,14 @@ If you'd rather see every edit and command before it happens, `Shift+Tab` in the
 
 ### Change the model and effort
 
-[Effort](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) is the main control for how long Claude thinks, and it replaces most of what people used to do with prompt wording. Claude Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to `medium`, which is plenty for everyday feature work with a clear scope. The times you'd move it, with `/effort` in the session:
+[Effort](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) is the main control for how long Claude thinks, and it replaces most of what people used to do with prompt wording. Claude Fable 5.2, Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to `medium`, which is plenty for everyday feature work with a clear scope. The times you'd move it, with `/effort` in the session:
 
 * Raise it with `/effort high` or `/effort xhigh` when getting it right depends on cases that are quick to overlook. Think of a bug in code you didn't write, a flaky test, or a schema change where Claude has to find every reader of the old shape. Claude then checks more edge cases and verifies more of its work before answering, which is where the extra time and tokens go.
 * Lower it with `/effort low` when you're going back and forth quickly and reviewing each result anyway: brainstorming, a first sketch, a rename across a few files. Claude gets you a starting point sooner, and since you're steering every step, the extra deliberation wouldn't have changed much besides the wait.
 * Save `max` for a hard problem you want Claude to work through without you, like hunting for a security vulnerability. On ordinary tasks it tends to overthink, so you pay more for an answer that may be no better than `high` would have given you.
 * When only the next message needs it, like one tricky question in the middle of otherwise routine work, put [`ultrathink`](https://code.claude.com/docs/en/model-config#use-ultrathink-for-one-off-deep-reasoning) in that prompt instead of changing the setting.
 
-For the model itself, the default Opus 5.5 handles most coding well and Sonnet costs less on routine work. [Claude Fable 5.1](https://code.claude.com/docs/en/model-config.md#work-with-fable) is there when you select it explicitly with `/model fable`, and Haiku is a good fit for subagents doing simple jobs. [Model configuration](https://code.claude.com/docs/en/model-config.md) has the full list per plan and provider.
+For the model itself, the default Opus 5.5 handles most coding well and Sonnet costs less on routine work. To use [Claude Fable 5.2](https://code.claude.com/docs/en/model-config.md#work-with-fable), run `/model fable`. Haiku is a good fit for subagents doing simple jobs. [Model configuration](https://code.claude.com/docs/en/model-config.md) has the full list per plan and provider.
 
 ### Know what subagents cost
 
@@ -545,7 +545,7 @@ Once it's going, Claude will carry a long task through on its own. The parts tha
 In a script you'll almost always want a few more flags:
 
 * [`--bare`](https://code.claude.com/docs/en/headless#start-faster-with-bare-mode) skips hooks, skills, plugins, MCP servers, and `CLAUDE.md` files, the repo's as well as the machine's, so the run does the same thing wherever it runs. It also never touches your claude.ai login: auth comes from `ANTHROPIC_API_KEY`, an `apiKeyHelper` in the file you pass with `--settings`, or your cloud provider's credentials.
-* `--append-system-prompt`, `--mcp-config`, and `--settings` pass in whatever the run *does* need, explicitly.
+* `--append-system-prompt`, `--mcp-config`, and `--settings` explicitly pass in what the run *does* need. Hooks you pass with `--settings` [don't run under `--bare`](https://code.claude.com/docs/en/headless#start-faster-with-bare-mode), so don't use `--bare` for a run that needs them.
 * `--allowedTools` pre-approves its tools, and [`--permission-mode dontAsk`](https://code.claude.com/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode) refuses anything else that would have prompted.
 * `--output-format json` gives you a single result object to parse, and `stream-json` with `--verbose` streams events as they happen.
 
@@ -596,7 +596,7 @@ Keep it to small files: it copies rather than links, so `node_modules` in there 
 
 You rarely have to clean any of this up yourself:
 
-* When you exit an unnamed worktree session, Claude Code [removes the worktree](https://code.claude.com/docs/en/worktrees.md#clean-up-worktrees) if there's nothing in it. For a named session, or one with changes, it asks what to do.
+* When you exit an unnamed worktree session, Claude Code [removes a worktree it created with git](https://code.claude.com/docs/en/worktrees.md#clean-up-worktrees) if there's nothing in it. For a named session, or one with changes, it asks what to do.
 * Subagent worktrees disappear when the subagent finishes without changes.
 * Subagent and background-session worktrees that do get left behind are swept once they're older than `cleanupPeriodDays` and hold no work.
 
@@ -604,7 +604,7 @@ You rarely have to clean any of this up yourself:
 >
 > A `claude -p --worktree` run is one you clean up yourself, since it exits without asking. Remove those with `git worktree remove <path>`, and if git refuses because the worktree is locked, `git worktree unlock <path>` first.
 
-For one big mechanical change across many files, [`/batch migrate every handler to the v2 response helpers`](https://code.claude.com/docs/en/commands) splits the work into 5 to 30 units and shows you the plan. Then it runs each unit in its own worktree and opens a PR for it. From your shell, [`claude agents`](https://code.claude.com/docs/en/agent-view) (still a research preview) gives you one screen for everything running in the background on your machine.
+For one big mechanical change across many files, [`/batch migrate every handler to the v2 response helpers`](https://code.claude.com/docs/en/commands) splits the work into 5 to 30 units and shows you the plan. Once you approve it, each unit gets its own worktree and opens a PR or reports what happened. From your shell, [`claude agents`](https://code.claude.com/docs/en/agent-view) (still a research preview) gives you one screen for everything running in the background on your machine.
 
 A second session is also the easiest independent reviewer you can get. One session writes the rate limiter, another reviews `@src/middleware/rateLimiter.ts` without having watched it being written, and you paste the findings back into the first. Same idea as `/code-review`, with you carrying the messages.
 

@@ -1,4 +1,4 @@
-<!-- source: https://code.claude.com/docs/en/settings.md | updated: 2026-11-02T19:06:55.114432+00:00 -->
+<!-- source: https://code.claude.com/docs/en/settings.md | updated: 2026-11-16T19:13:31.722552+00:00 -->
 > ## Documentation Index
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
@@ -67,7 +67,7 @@ Claude Code also keeps a fifth file, [`~/.claude.json`](https://code.claude.com/
 
 ### Share settings with your team
 
-Commit `.claude/settings.json` so everyone who clones the repository gets the same permissions, hooks, and plugins. Each teammate can still override it for themselves in their own `.claude/settings.local.json`, so personal exceptions don't need a commit. For a complete team file, see [a team's shared settings](https://code.claude.com/docs/en/settings-example.md#a-teams-shared-settings).
+Commit `.claude/settings.json` so everyone who clones the repository gets the same permissions, hooks, and plugin settings. Each teammate can still override it for themselves in their own `.claude/settings.local.json`, so personal exceptions don't need a commit. For a complete team file, see [a team's shared settings](https://code.claude.com/docs/en/settings-example.md#a-teams-shared-settings).
 
 Some of what you commit waits until each teammate [trusts the folder](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust), and a few keys never take effect from a repository file; [Troubleshoot a setting that doesn't apply](#common-cases) covers both.
 
@@ -178,12 +178,14 @@ claude --settings '{"model": "claude-opus-5-5"}'
 
 Claude Code watches your settings files and reloads them when they change, so it applies most edits to the running session without a restart, including edits to `permissions`, `hooks`, and credential helpers such as `apiKeyHelper`. Claude Code also loads a settings file you create mid-session if its folder existed when the session started. For the project's `.claude/` folder, it loads the file even when you create the folder in the same session.
 
-The reload covers user, project, local, and managed settings, and Claude Code runs the [`ConfigChange` hook](https://code.claude.com/docs/en/hooks#configchange) for each settings-file change it detects, not for managed settings that arrive from MDM or the claude.ai console. Managed settings that arrive through MDM or from the claude.ai console reach a running session on a schedule rather than on save; the [delivery table](https://code.claude.com/docs/en/managed-settings.md#choose-a-delivery-mechanism) gives it per source.
+The reload covers user, project, local, and managed settings. Claude Code runs the [`ConfigChange` hook](https://code.claude.com/docs/en/hooks#configchange) for direct edits to settings files, not for managed settings that arrive from MDM or the claude.ai console. Managed settings that arrive through MDM or from the claude.ai console reach a running session on a schedule rather than on save; the [delivery table](https://code.claude.com/docs/en/managed-settings.md#choose-a-delivery-mechanism) gives it per source.
 
 Claude Code reads some keys only once, at session start, so an edit to one of them doesn't reach the running session. Admin-side keys that also wait for a restart, such as `requiredMinimumVersion`, are listed under [where and when a policy applies](https://code.claude.com/docs/en/managed-settings.md#where-and-when-a-policy-applies). The ones you're most likely to edit mid-session:
 
 * [`model`](https://code.claude.com/docs/en/settings-reference#model): use [`/model`](https://code.claude.com/docs/en/model-config#setting-your-model) to switch mid-session. Each model has its own prompt cache, so the first request after a switch re-reads the whole conversation uncached; see [Switching models](https://code.claude.com/docs/en/prompt-caching.md#switching-models)
 * [`effortLevel`](https://code.claude.com/docs/en/settings-reference#effortlevel) and [`modelSettings`](https://code.claude.com/docs/en/settings-reference#modelsettings): use [`/effort`](https://code.claude.com/docs/en/model-config#adjust-effort-level) to change effort mid-session
+
+If you remove [`permissions.blockReadsOutsideWorkingDirectories`](https://code.claude.com/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) mid-session, the file tools keep the block in the running session. To lift it, remove the key from every settings file that sets it, then restart each running session.
 
 ### Confirm what loaded
 
@@ -198,11 +200,11 @@ If you mistype JSON or set a key to a value Claude Code doesn't accept, Claude C
 * **Settings Error**: a user, project, or local file has invalid JSON or a value the schema rejects. At the start of an interactive session Claude Code shows a dialog that lets you fix the file with Claude's help, exit, or continue without the broken settings.
 * **Settings Warning**: only individual entries fail, such as a malformed permission rule or an unknown hook event name. Claude Code skips those values and keeps the rest of the file in effect.
 * **Managed settings**: Claude Code keeps enforcing the rest of the file. [Invalid entries in managed settings](https://code.claude.com/docs/en/managed-settings.md#invalid-entries-in-managed-settings) says what it drops and which keys fall back to a stricter value until you fix them. For a managed settings document that isn't valid JSON, see [Managed settings document could not be parsed](https://code.claude.com/docs/en/errors.md#managed-settings-document-could-not-be-parsed).
-* **Configuration error**: `~/.claude.json` can't be parsed. Claude Code copies the broken file to `~/.claude/backups/.claude.json.corrupted.<timestamp>` and asks whether to exit and fix it by hand or reset to the default configuration; a `-p` run prints the error and exits. To recover your previous state, copy back one of the five most recent `.claude.json.backup.<timestamp>` files in `~/.claude/backups/`, which Claude Code saves before it writes the file.
+* **Configuration error**: [`~/.claude.json`](https://code.claude.com/docs/en/claude-directory#ce-claude-json) can't be parsed. A `claude -p` run exits. See [Configuration error in \~/.claude.json](https://code.claude.com/docs/en/errors.md#configuration-error-in-claude-json) to restore an earlier copy. Claude Code copies the broken file to `~/.claude/backups/.claude.json.corrupted.<timestamp>`, and in an interactive session asks whether to exit and fix it or reset to the default configuration. When the file is blank and there's no backup to restore, Claude Code starts with default settings.
 
 After you continue, run `/status` to see the affected files and `claude doctor` for the details of each error.
 
-A `-p` run shows no dialog. Unless [a managed settings document can't be parsed](https://code.claude.com/docs/en/errors.md#managed-settings-document-could-not-be-parsed), Claude Code skips the broken file or values and continues with the rest, so after a `-p` run that ignores a setting, run `claude doctor` to see what it dropped.
+A `-p` run shows no dialog. Unless [a managed settings document can't be parsed](https://code.claude.com/docs/en/errors.md#managed-settings-document-could-not-be-parsed), Claude Code skips a broken user, project, or local file or its broken values and continues with the rest. After a `-p` run that ignores a setting, run `claude doctor` from your terminal to see what it dropped.
 
 ## Settings precedence
 
@@ -309,10 +311,11 @@ For a few keys whose values restrict a session, Claude Code honors a restrictive
 | [`isolatePeerMachines`](https://code.claude.com/docs/en/settings-reference#isolatepeermachines) | `true` from any scope | Honored even when a managed source sets `false` |
 | [`permissions.blockReadsOutsideWorkingDirectories`](https://code.claude.com/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) | `true` from any scope | Honored even when a managed source sets `false`. Requires Claude Code v2.1.257 or later |
 | [`permissions.blockWritesOutsideWorkingDirectories`](https://code.claude.com/docs/en/settings-reference#permissions-blockwritesoutsideworkingdirectories) | `true` from any scope | Honored even when a managed source sets `false`. Requires Claude Code v2.1.314 or later |
+| [`permissions.denyInsteadOfPrompting`](https://code.claude.com/docs/en/settings-reference#permissions-denyinsteadofprompting) | `true` from `~/.claude/settings.json` or `--settings` | Honored even when a managed source sets `false`. Requires Claude Code v2.1.319 or later |
 | [`autoMode.classifyAllShell`](https://code.claude.com/docs/en/settings-reference#automode-classifyallshell) | `true` from `~/.claude/settings.json` or `--settings` | Honored even when a managed source sets `false` |
 | [`remoteControlAtStartup`](https://code.claude.com/docs/en/settings-reference#remotecontrolatstartup) | `false` from `.claude/settings.json` or `.claude/settings.local.json` | Honored even when a managed source sets `true`; a project or local `true` is ignored |
 | [`crossSessionInbound`](https://code.claude.com/docs/en/settings-reference#crosssessioninbound) | A stricter value from `.claude/settings.json` or `.claude/settings.local.json`, on the `accept` \< `hold` \< `refuse` ladder | Honored over managed, `--settings`, and user values; a project or local value that isn't stricter is ignored |
-| [`useAutoModeDuringPlan`](https://code.claude.com/docs/en/settings-reference#useautomodeduringplan) | `false` from any managed source, `--settings`, `~/.claude/settings.json`, or `.claude/settings.local.json` | Honored even when the winning managed source sets `true`; a `false` in `.claude/settings.json` is ignored |
+| [`useAutoModeDuringPlan`](https://code.claude.com/docs/en/settings-reference#useautomodeduringplan) | `false` from any managed source, `--settings`, `~/.claude/settings.json`, or `.claude/settings.local.json` | Honored even when the winning managed source sets `true`; a `false` in `.claude/settings.json` is ignored. See [the key's entry](https://code.claude.com/docs/en/settings-reference.md#useautomodeduringplan) for a file you leave out at launch |
 | [`syncClaudeAiSkills`](https://code.claude.com/docs/en/settings-reference#syncclaudeaiskills) | `false` from any managed source, `--settings`, `~/.claude/settings.json`, or `.claude/settings.local.json` | Honored even when the winning managed source sets `true`; a `false` in `.claude/settings.json` is ignored |
 | [`syncClaudeAiPlugins`](https://code.claude.com/docs/en/settings-reference#syncclaudeaiplugins) | `false` from any managed source, `--settings`, `~/.claude/settings.json`, or `.claude/settings.local.json` | Honored even when the winning managed source sets `true`; a `false` in `.claude/settings.json` is ignored |
 | [`maxEffortLevel`](https://code.claude.com/docs/en/settings-reference#maxeffortlevel) | A lower cap from any scope, including `--settings` | Honored even when the managed settings Claude Code applies set a higher cap; the lowest cap applies. Requires Claude Code v2.1.267 or later |

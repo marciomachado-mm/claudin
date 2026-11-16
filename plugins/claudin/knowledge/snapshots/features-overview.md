@@ -1,4 +1,4 @@
-<!-- source: https://code.claude.com/docs/en/features-overview.md | updated: 2026-11-02T19:06:55.114432+00:00 -->
+<!-- source: https://code.claude.com/docs/en/features-overview.md | updated: 2026-11-16T19:13:31.722552+00:00 -->
 > ## Documentation Index
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
@@ -189,7 +189,7 @@ Some features can seem similar. For a deeper walkthrough of choosing between the
 >
 > **Put guardrails in hooks.** An instruction like "never edit `.env`" in CLAUDE.md or a skill is a request, not a guarantee. A `PreToolUse` hook that blocks the edit is enforcement. If a rule must hold every time, make it a hook rather than a prompt instruction.
 >
-> **Hook output lands in context.** A `PostToolUse` hook that runs your linter feeds results back as text Claude reads; a `/fix-lint` skill tells Claude how to resolve them.
+> **Pair a hook with a skill.** Use a `PostToolUse` hook to run your linter and [send the errors to Claude](https://code.claude.com/docs/en/hooks.md#exit-code-2-behavior-per-event). To give Claude your own rules for fixing the errors, write a skill such as `/fix-lint`.
 
 ### Understand how features layer
 
