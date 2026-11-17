@@ -47,6 +47,9 @@ sai daqui:
 - quem usa: só ele, um time, ou outras pessoas
 - que fluxo se repete o bastante para virar comando
 - o que precisa acontecer **sempre**, sem depender de lembrar (candidato a hook)
+- que segredo local o projeto terá (`.env`, token de API, credencial de banco). Com
+  segredo, o `deny` de `Read` e `Edit` dele é a recomendação padrão, mesmo que o usuário
+  não tenha pedido nada "sempre"; se ele recusar, o risco vai para **Descartado**
 - que decisão já está tomada e não deve ser revisitada
 
 ## 3. Proponha a arquitetura
