@@ -13,20 +13,29 @@ Code puro.
 
 ## Instalar
 
-São três passos no Claude Code:
+**Pré-requisito:** Python 3 no PATH (`python --version` no Windows, `python3 --version` no
+Linux e no macOS). As skills rodam scripts Python só com a biblioteca padrão; não precisa
+instalar pacote.
 
-1. **Adicione o marketplace e instale o plugin:**
+São três passos, todos dentro de uma sessão do Claude Code (não precisa do comando `claude`
+no terminal):
+
+1. **Adicione o marketplace e instale o plugin**, um comando de cada vez. O primeiro só
+   registra o catálogo; quem instala é o segundo:
 
    ```
    /plugin marketplace add marciomachado-mm/claudin
    /plugin install claudin@claudin
    ```
 
+   Depois, `/reload-plugins` ou uma sessão nova.
+
 2. **Ligue a atualização automática.** Em marketplace de terceiros ela vem desligada: em
    `/plugin`, abra **Marketplaces**, escolha `claudin` e selecione **Enable auto-update**
-   ([doc oficial](https://code.claude.com/docs/en/plugins/install.md)).
+   ([doc oficial](https://code.claude.com/docs/en/plugins/install.md)). Sem ela, atualize
+   quando quiser com `/plugin marketplace update claudin`.
 
-3. **Teste em qualquer projeto:** `/claudin:about`.
+3. **Teste em qualquer projeto:** `/claudin:about` mostra a versão instalada e os comandos.
 
 ### Usar direto de um clone
 
