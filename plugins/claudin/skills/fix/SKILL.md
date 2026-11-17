@@ -49,6 +49,11 @@ Correção que exige decisão de desenho (ex: dividir o CLAUDE.md em
 rules, trocar o modelo de um agente) entra marcada como **decisão**, com a sua
 recomendação.
 
+Regra de permissão que você propõe passa pelo mesmo catálogo: nome de arquivo sem `./`
+para casar em qualquer pasta (`Read(.env)`, PERM-004) e `Edit` no lugar de `Write` ou
+`NotebookEdit` (PERM-001). O validador só confere o que já está escrito no disco, não o
+texto do plano.
+
 Pergunte ao usuário o que aplicar: tudo, só os erros, ou números específicos. Espere a
 resposta. Só aplique o que foi aprovado.
 

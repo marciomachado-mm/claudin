@@ -107,6 +107,10 @@ Para ler o contexto de um resultado, use
 do plugin fica fora do projeto. Achou e confirma: cite `página.md:linha` como fonte. Achou
 e contradiz: corrija o achado. Não achou: o item vai para "não verificado".
 
+A coluna de correção também passa pelo catálogo: regra de permissão proposta usa nome de
+arquivo sem `./` para casar em qualquer pasta (`Read(.env)`, PERM-004) e `Edit` no lugar
+de `Write` ou `NotebookEdit` (PERM-001). O validador não confere o texto do relatório.
+
 ## 6. Apresente o relatório
 
 Abra com o **caminho auditado**. Depois:
