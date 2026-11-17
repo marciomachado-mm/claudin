@@ -26,6 +26,25 @@ if hasattr(sys.stdout, "reconfigure"):
 
 LABELS = {"error": "ERRO", "warn": "AVISO", "info": "INFO"}
 
+# O que cada prefixo de regra cobre. "0 erro(s)" sem esta nota já foi lido como se o
+# validador tivesse conferido um hook gerado, que ele não olha.
+AREAS = {
+    "AGENT": "agentes",
+    "SKILL": "skills",
+    "RULE": "rules",
+    "FM": "frontmatter de rules",
+    "INSTR": "tamanho de instruções",
+    "PERM": "regras de permissão",
+    "SET": "sintaxe dos settings",
+}
+NOT_COVERED = "hooks (evento, matcher, script e código de saída), .mcp.json e o texto de propostas"
+
+
+def coverage_note() -> str:
+    prefixes = dict.fromkeys(r.id.split("-")[0] for r in RULES)
+    covered = ", ".join(AREAS[p] for p in prefixes)
+    return f"Cobre: {covered}. Não cobre: {NOT_COVERED}."
+
 
 def print_rules() -> None:
     for r in RULES:
@@ -62,6 +81,7 @@ def main() -> int:
             print(f"[{LABELS[f.severity]}] {f.rule_id} {f.path}\n        {f.message}  ({sources[f.rule_id]})")
         counts = {s: sum(f.severity == s for f in findings) for s in LABELS}
         print(f"\n{len(RULES)} regras, {counts['error']} erro(s), {counts['warn']} aviso(s), {counts['info']} info.")
+        print(coverage_note())
     return 1 if any(f.severity == "error" for f in findings) else 0
 
 

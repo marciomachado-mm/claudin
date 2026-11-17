@@ -103,5 +103,9 @@ escolheu, para qual sistema, e que outro sistema precisa trocar. Com
    saída e o código de saída
 3. Diga ao usuário como observar o hook disparando (ex: `claude --debug`)
 
+No relatório, atribua cada verificação a quem a fez: o validador confere o JSON do
+settings, não o hook (a última linha da saída dele diz o que cobre); o script, o matcher e
+a decisão só o teste do passo 2 conferiu.
+
 Pronto quando o settings é JSON válido, o script responde certo ao exemplo e o usuário
 sabe como verificar na sessão.

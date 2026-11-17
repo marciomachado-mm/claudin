@@ -67,6 +67,14 @@ class TraceabilityTest(unittest.TestCase):
                     f"o trecho que sustenta {r.id} sumiu de {r.source}: revise a regra",
                 )
 
+    def test_coverage_note_names_every_rule_prefix(self) -> None:
+        # Prefixo novo sem área na nota faria o resumo omitir o que a regra cobre.
+        import validate
+        for prefix in {r.id.split("-")[0] for r in RULES}:
+            with self.subTest(prefix=prefix):
+                self.assertIn(prefix, validate.AREAS)
+        self.assertIn("Não cobre: hooks", validate.coverage_note())
+
     def test_since_is_a_version(self) -> None:
         for r in RULES:
             if r.since is not None:
