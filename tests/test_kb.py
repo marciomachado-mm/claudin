@@ -49,6 +49,15 @@ class KbTest(unittest.TestCase):
                     with self.subTest(skill=skill.parent.name, script=script, python=python):
                         self.assertIn(f"Bash({python} ${{CLAUDE_PLUGIN_ROOT}}/scripts/{script} *)", text)
 
+    def test_skills_pick_interpreter_by_system(self) -> None:
+        # Tentar `python` e cair para `python3` custa um erro visível em todo uso no Linux.
+        for skill in PLUGIN.glob("skills/*/SKILL.md"):
+            text = skill.read_text(encoding="utf-8")
+            if "${CLAUDE_PLUGIN_ROOT}/scripts/" not in text:
+                continue
+            with self.subTest(skill=skill.parent.name):
+                self.assertIn("Escolha o interpretador pelo sistema antes do primeiro comando", text)
+
 
 if __name__ == "__main__":
     unittest.main()

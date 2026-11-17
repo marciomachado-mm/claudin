@@ -19,7 +19,7 @@ Se não houver descrição acima, pergunte o que o agente deve fazer. O destino 
 
 Os comandos do claudin são pré-aprovados só na forma exata: rode cada um **sozinho**
 (sem `cd`, `&&` ou `;`) e escreva o caminho com barras `/`.
-Use `python` no Windows; no Linux ou macOS, se `python` não existir, use `python3` no lugar, com o resto do comando igual.
+Escolha o interpretador pelo sistema antes do primeiro comando: `python` no Windows, `python3` no Linux e no macOS, com o resto do comando igual. Só se o nome escolhido não existir, use o outro.
 
 ```bash
 python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py guide choosing-features
