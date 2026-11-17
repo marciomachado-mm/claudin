@@ -12,8 +12,9 @@ allowed-tools:
 
 Crie uma skill para: $ARGUMENTS
 
-Se não houver descrição acima, pergunte o que a skill deve fazer. O destino é
-`.claude/skills/<nome>/SKILL.md` do projeto atual, salvo se o usuário indicar outro.
+Se não houver descrição acima, pergunte só o que a skill deve fazer. O destino é
+`.claude/skills/<nome>/SKILL.md` do projeto atual, salvo se o usuário indicar outro; ele
+aparece na proposta do passo 3, onde o usuário pode trocá-lo, e não vira pergunta.
 
 ## 1. É skill mesmo?
 
