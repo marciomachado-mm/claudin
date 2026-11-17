@@ -71,7 +71,9 @@ e o resultado chegaria fora deste fluxo (`sub-agents.md`, v2.1.302).
 
 1. Mapeie o alvo: `CLAUDE.md` e `AGENTS.md` (raiz e subpastas), `CLAUDE.local.md`,
    `.claude/` (skills, agents, rules, commands, hooks, settings), `.mcp.json`, `.gitignore`.
-   Em plugin: `skills/`, `agents/`, `hooks/`, `.mcp.json`. Leia cada arquivo do mapa
+   Em plugin: `skills/`, `agents/`, `hooks/`, `.mcp.json`. Leia cada arquivo do mapa.
+   O mapa fica dentro do alvo: o que vem de fora dele (`~/.claude/`, hook ou script de
+   outro repo) você só nomeia como origem do achado, sem abrir
 2. Os achados do validador já vêm explicados: não os repita, só use a severidade deles
 3. Procure o que o validador não decide, com o catálogo de anti-padrões na mão:
    - skill com efeito colateral sem `disable-model-invocation: true`
