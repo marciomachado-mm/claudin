@@ -28,36 +28,18 @@ São três passos no Claude Code:
 
 3. **Teste em qualquer projeto:** `/claudin:about`.
 
-### Outras formas de usar
+### Usar direto de um clone
 
-<details>
-<summary><strong>Abrir o Claude Code no próprio repo</strong></summary>
+Para testar uma alteração sem instalar, carregue o plugin da pasta só naquela sessão:
 
 ```bash
 git clone https://github.com/marciomachado-mm/claudin.git
 cd claudin
-claude
-```
-
-Aceite a pergunta de confiança da pasta: o `.claude/settings.json` do repo registra a
-própria pasta como marketplace e liga o plugin, que carrega direto dos arquivos, sem
-instalar. Uma edição nas skills vale na próxima sessão ou com `/reload-plugins`
-([doc oficial](https://code.claude.com/docs/en/plugins/org.md)). Se você já instalou o
-claudin pelo marketplace, vale a cópia instalada; use a forma abaixo.
-
-</details>
-
-<details>
-<summary><strong>Carregar da pasta só numa sessão</strong></summary>
-
-```bash
 claude --plugin-dir ./plugins/claudin
 ```
 
-Tem precedência sobre um claudin já instalado
+Tem precedência sobre um claudin já instalado e lê os arquivos direto da pasta, sem copiar
 ([doc oficial](https://code.claude.com/docs/en/plugins/loading.md)).
-
-</details>
 
 ## Como o repo se organiza
 
@@ -65,7 +47,6 @@ Tem precedência sobre um claudin já instalado
 |---|---|
 | `plugins/claudin/` | O plugin: o que é instalado |
 | `.claude-plugin/marketplace.json` | Faz deste repo um marketplace com um plugin |
-| `.claude/settings.json` | Carrega o plugin quando o Claude Code abre no próprio repo |
 | `tools/` | Baixa as docs oficiais e detecta defasagem |
 | `tests/` | Testes do repo e do validador |
 

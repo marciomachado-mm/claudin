@@ -15,4 +15,5 @@ python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py about
 ```
 
 Mostre a saída em português: nome e versão, e cada comando com a sua descrição. Diga que o
-claudin está em construção e que o roadmap fica em https://github.com/marciomachado-mm/claudin.
+claudin está em construção e que instalação, novidades e como reportar um problema ficam em
+https://github.com/marciomachado-mm/claudin.
