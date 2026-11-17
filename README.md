@@ -50,6 +50,11 @@ Tem precedência sobre um claudin já instalado e lê os arquivos direto da past
 | `tools/` | Baixa as docs oficiais e detecta defasagem |
 | `tests/` | Testes do repo e do validador |
 
+## Problemas e contribuições
+
+Issues são bem-vindas: falha, comportamento estranho ou sugestão, com a versão do claudin e
+do Claude Code. Pull requests de terceiros não são aceitos.
+
 ## Créditos
 
 O protocolo de `/claudin:grill-me` e o vocabulário de
