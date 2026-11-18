@@ -29,7 +29,9 @@ AGENT_FIELDS = frozenset({
 RULE_FIELDS = frozenset({"paths"})
 
 PLUGIN_IGNORED_AGENT_FIELDS = ("hooks", "mcpServers", "permissionMode")
-FILE_PATH_TOOLS = {"Write": "Edit", "NotebookEdit": "Edit", "MultiEdit": "Edit", "Glob": "Read"}
+FILE_PATH_TOOLS = {
+    "Write": "Edit", "NotebookEdit": "Edit", "MultiEdit": "Edit", "Glob": "Read", "Grep": "Read",
+}
 CONTENT_FIELDS = {
     "Bash": "command", "PowerShell": "command", "Read": "file_path", "Edit": "file_path",
     "Write": "file_path", "Grep": "path", "Glob": "path", "NotebookEdit": "notebook_path",
@@ -305,13 +307,13 @@ def settings_json(t: Target) -> Iterator[tuple[Path, str]]:
     "PERM-001", severity="error",
     title="Regra de caminho usa Edit ou Read",
     source="permissions.md",
-    evidence="Claude Code checks file permissions against `Edit(path)` and `Read(path)` rules only",
+    evidence="It accepts a rule with a path other than `*` for one of the tools below but doesn't match a read, search, or edit against it.",
     since="2.1.210",
 )
 def perm_file_tools(t: Target) -> Iterator[tuple[Path, str]]:
     for path, kind, entry in t.permission_rules():
         m = RULE_RE.match(entry)
-        if m and m.group("tool") in FILE_PATH_TOOLS and m.group("spec").strip():
+        if m and m.group("tool") in FILE_PATH_TOOLS and m.group("spec").strip() not in ("", "*"):
             use = FILE_PATH_TOOLS[m.group("tool")]
             yield path, f"{kind}: '{entry}' nunca é consultada; use {use}({m.group('spec')})"
 

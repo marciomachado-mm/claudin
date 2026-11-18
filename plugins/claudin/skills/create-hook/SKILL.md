@@ -72,9 +72,11 @@ Confira cada item na seção do evento escolhido:
 - **JSON de decisão** tem formato próprio por evento (ex: `permissionDecision` no
   `PreToolUse`). Para devolver decisão em JSON, saia com 0. Logs vão para stderr, nunca
   misturados ao JSON no stdout
-- **Um mod instalado com `tool.check` pode aprovar o que o `PreToolUse` bloqueou**, a
-  menos que o hook esteja em managed settings (`hooks-guide.md`). Para algo crítico, diga
-  isso ao usuário
+- **Um mod instalado com `tool.check` pode aprovar o que o `PreToolUse` bloqueou**, seja
+  qual for o arquivo do hook, a menos que a máquina tenha managed settings ou
+  `managed-mcp.json`, ou que a sessão use login Team ou Enterprise (API key e
+  `CLAUDE_CODE_OAUTH_TOKEN` não contam) (`permissions.md` § mods, `hooks-guide.md`). Para
+  algo crítico, diga isso ao usuário
 - **Prompt bloqueado não some do disco:** um `UserPromptSubmit` que bloqueia impede o
   prompt de chegar ao Claude, mas o texto continua no transcript. Hook que barra segredo
   não o mantém fora do disco (`hooks.md` § What a blocked prompt leaves behind)

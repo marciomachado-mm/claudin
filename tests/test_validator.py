@@ -42,6 +42,14 @@ class FixtureTest(unittest.TestCase):
         files = {".claude/skills/de​ploy/SKILL.md": "---\ndescription: Faz deploy.\n---\n"}
         self.assertEqual({f.rule_id for f in findings_for(files)}, {"SKILL-004"})
 
+    def test_perm001_star_path_and_grep(self) -> None:
+        # A doc só desconsidera caminho diferente de `*`; Grep entrou na lista no snapshot de 2026-11-16.
+        def rules(entry: str) -> set[str]:
+            settings = '{"permissions": {"deny": ["%s"]}}\n' % entry
+            return {f.rule_id for f in findings_for({".claude/settings.json": settings})}
+        self.assertEqual(rules("Write(*)"), set())
+        self.assertEqual(rules("Grep(docs/**)"), {"PERM-001"})
+
     def test_plugin_skill_folder_chars_are_not_flagged(self) -> None:
         # Em plugin, a doc diz que os caracteres viram hífen no nome do comando.
         files = {

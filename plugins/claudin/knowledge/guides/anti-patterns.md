@@ -18,7 +18,7 @@ da regra; o resto exige leitura e julgamento.
 
 | Anti-padrão | Correto | Por quê | Fonte |
 |---|---|---|---|
-| `Write(path)`, `NotebookEdit(path)`, `Glob(path)` em permissões | `Edit(path)` ou `Read(path)` | Aceitas mas nunca consultadas, desde a v2.1.210 | `permissions.md` (PERM-001) |
+| `Write(path)`, `NotebookEdit(path)`, `Glob(path)`, `Grep(path)` em permissões | `Edit(path)` ou `Read(path)` | Aceitas mas nunca consultadas, desde a v2.1.210 (`Tool(*)` e o nome sozinho valem para todo uso). Como ask, `Read(docs/**)` pergunta quando Grep ou Glob miram o caminho, mas não quando a busca parte de uma pasta acima | `permissions.md` (PERM-001) |
 | `Bash(command:rm *)` | `Bash(rm *)` | Regra sobre o campo principal é ignorada | `permissions.md` (PERM-002) |
 | `deny: Bash(rm -rf *)` tratado como proteção | Sandbox para isolamento real; deny como atrito | Padrões de Bash com argumentos são frágeis e contornáveis. O sandbox roda em macOS, Linux e WSL2; no Windows nativo os comandos rodam sem sandbox | `permissions.md` (PERM-003), `sandboxing.md` |
 | `deny: Read(path)` esperando bloquear toda escrita | Somar `Edit(path)` ao deny | Deny de `Read` bloqueia Edit (v2.1.208+) e Write (v2.1.228+) no mesmo caminho, mas não NotebookEdit | `permissions.md` |
