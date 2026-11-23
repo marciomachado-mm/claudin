@@ -1,4 +1,4 @@
-<!-- source: https://code.claude.com/docs/en/plugins.md | updated: 2026-11-02T19:06:55.114432+00:00 -->
+<!-- source: https://code.claude.com/docs/en/plugins.md | updated: 2026-11-23T20:50:13.012277+00:00 -->
 > ## Documentation Index
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
@@ -37,7 +37,7 @@ This diagram shows a plugin named `my-plugin` that holds a skill, an agent, hook
 
 ![Diagram in two columns joined by five straight arrows. Left, the directory of a plugin named my-plugin, holding a manifest at .claude-plugin/plugin.json, skills/review/SKILL.md, agents/reviewer.md, hooks/hooks.json, .mcp.json, and other components. Right, what each file gives you in your session: the manifest sets the plugin name, my-plugin; the skill runs as /my-plugin:review; the agent file is a subagent Claude can delegate to; the hooks file holds hooks that run on lifecycle events; and .mcp.json adds an MCP server that gives Claude tools.](https://mintcdn.com/claude-code/2Q_GtOEovg5qaBem/images/plugin-directory.svg?fit=max\&auto=format\&n=2Q_GtOEovg5qaBem\&q=85\&s=f623b64e82713b830e48174f0a922888)
 
-For every component type a plugin can hold, with an example of each, see [Plugin components](https://code.claude.com/docs/en/plugins/components.md). To see where each piece is located in a plugin's directory, use the [plugin explorer](https://code.claude.com/docs/en/plugins/components.md#explore-the-plugin-directory) on that page.
+For component types a plugin can hold, with an example of each, see [Plugin components](https://code.claude.com/docs/en/plugins/components.md). To see where each piece is located in a plugin's directory, use the [plugin explorer](https://code.claude.com/docs/en/plugins/components.md#explore-the-plugin-directory) on that page.
 
 ### Decide whether you need a plugin
 
@@ -73,7 +73,7 @@ This diagram shows the path from a marketplace to your session. A marketplace li
 
 ![Diagram of the marketplace path in three boxes, left to right. A marketplace, a catalog of plugins, lists a plugin. The plugin is one directory installed as a unit, holding skills, agents, hooks, MCP servers, and other components. You install the plugin into Claude Code, which loads its components.](https://mintcdn.com/claude-code/2Q_GtOEovg5qaBem/images/plugins-model.svg?fit=max\&auto=format\&n=2Q_GtOEovg5qaBem\&q=85\&s=4196344954b7c2e27fc0bd6a9a1113a1)
 
-[Install and manage plugins](https://code.claude.com/docs/en/plugins/install.md#install-a-plugin) has the install steps for each place you run Claude Code. While you're developing a plugin, you don't need a marketplace: load it straight from its folder with `--plugin-dir`, as [Develop without a marketplace](https://code.claude.com/docs/en/plugins/create.md#develop-without-a-marketplace) shows.
+[Install and manage plugins](https://code.claude.com/docs/en/plugins/install.md#install-a-plugin) has the install steps for each place you run Claude Code. While you're developing a plugin, load it straight from its folder with `--plugin-dir`, as [Develop without a marketplace](https://code.claude.com/docs/en/plugins/create.md#develop-without-a-marketplace) shows.
 
 ### Make an installed plugin available in your session
 
@@ -87,7 +87,7 @@ Read [Plugin loading reference](https://code.claude.com/docs/en/plugins/loading.
 
 ## Tell Anthropic's marketplaces from third-party ones
 
-A marketplace's name places it in one of three tiers. Claude Code accepts the official and community names only for marketplaces sourced from `github.com/anthropics/` repositories:
+A marketplace's name places it in one of three tiers. Claude Code accepts the official and community names for marketplaces sourced from `github.com/anthropics/` repositories:
 
 * **Official**: marketplaces with one of Anthropic's [official marketplace names](https://code.claude.com/docs/en/plugins/security.md#official-marketplace-names), including `claude-plugins-official` and `claude-code-plugins`.
 * **Community**: marketplaces with one of Anthropic's community names, such as `claude-community`. [Identify Anthropic's marketplaces by name](https://code.claude.com/docs/en/plugins/security.md#marketplace-tiers) lists them.

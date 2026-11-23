@@ -1,4 +1,4 @@
-<!-- source: https://code.claude.com/docs/en/memory.md | updated: 2026-11-02T19:06:55.114432+00:00 -->
+<!-- source: https://code.claude.com/docs/en/memory.md | updated: 2026-11-23T20:50:13.012277+00:00 -->
 > ## Documentation Index
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
@@ -7,7 +7,7 @@
 
 > Give Claude persistent instructions with CLAUDE.md or AGENTS.md files, and let Claude accumulate learnings automatically with auto memory.
 
-Each Claude Code session begins with a fresh context window. Two mechanisms carry knowledge across sessions:
+Each Claude Code session begins with a fresh context window. CLAUDE.md files and auto memory carry knowledge across sessions:
 
 * **CLAUDE.md files**: instructions you write to give Claude persistent context. Claude can also read a repository's [`AGENTS.md` files](#agents-md) in place of CLAUDE.md
 * **Auto memory**: notes Claude writes itself based on your corrections and preferences
@@ -22,19 +22,19 @@ This page covers how to:
 
 ## CLAUDE.md vs auto memory
 
-Claude Code has two complementary memory systems. Both are loaded at the start of every conversation. Claude treats them as context, not enforced configuration. To block an action regardless of what Claude decides, use a [PreToolUse hook](https://code.claude.com/docs/en/hooks-guide.md) instead. The more specific and concise your instructions, the more consistently Claude follows them.
+Use CLAUDE.md files when you want to guide Claude's behavior. Auto memory lets Claude learn from your corrections without manual effort.
 
 | | CLAUDE.md files | Auto memory |
 | :- | :- | :- |
 | **Who writes it** | You | Claude |
 | **What it contains** | Instructions and rules | Learnings and patterns |
 | **Scope** | Project, user, or org | Per repository, shared across worktrees |
-| **Loaded into** | Every session | Every session (first 200 lines or 25KB) |
+| **Loaded into** | Every session | Sessions with [auto memory on](#enable-or-disable-auto-memory), up to the first 200 lines or 25KB of [`MEMORY.md`](#how-it-works) |
 | **Use for** | Coding standards, workflows, project architecture | Your preferences, corrections you give Claude, project context Claude can't derive from the code |
 
-Use CLAUDE.md files when you want to guide Claude's behavior. Auto memory lets Claude learn from your corrections without manual effort.
-
 Subagents can also maintain their own auto memory. See [subagent configuration](https://code.claude.com/docs/en/sub-agents.md#enable-persistent-memory) for details.
+
+Claude treats CLAUDE.md files and auto memory as context. They aren't enforced configuration. To block an action regardless of what Claude decides, use a [PreToolUse hook](https://code.claude.com/docs/en/hooks-guide.md) instead. The more specific and concise your instructions, the more consistently Claude follows them.
 
 ## CLAUDE.md files
 
@@ -68,7 +68,9 @@ For large projects, you can break instructions into topic-specific files using [
 
 ### Set up a project CLAUDE.md
 
-A project CLAUDE.md can be stored in either `./CLAUDE.md` or `./.claude/CLAUDE.md`. Create this file and add instructions that apply to anyone working on the project: build and test commands, coding standards, architectural decisions, naming conventions, and common workflows. These instructions are shared with your team through version control, so focus on project-level standards rather than personal preferences. To confirm the file loaded, run `/context` in a session and check the list under **Memory files**.
+A project CLAUDE.md can be stored in either `./CLAUDE.md` or `./.claude/CLAUDE.md`. Create this file and add instructions that apply to anyone working on the project: build and test commands, coding standards, architectural decisions, naming conventions, and common workflows. These instructions are shared with your team through version control, so focus on project-level standards rather than personal preferences.
+
+To confirm the file loaded, run [`/context all`](https://code.claude.com/docs/en/commands#all-commands) in a session and check the list under **Memory files**. In [fullscreen mode](https://code.claude.com/docs/en/fullscreen.md), `/context` alone collapses that list.
 
 > [!TIP]
 >
@@ -162,7 +164,7 @@ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 claude --add-dir ../shared-config
 
 The inline form sets the variable for that one launch in Bash or Zsh. To keep it on for every session, add it to the `env` block in `~/.claude/settings.json` as shown in [Set environment variables](https://code.claude.com/docs/en/env-vars.md#set-environment-variables).
 
-This loads `CLAUDE.md`, `.claude/CLAUDE.md`, `.claude/rules/*.md`, and `CLAUDE.local.md` from the additional directory. `CLAUDE.local.md` is skipped if you exclude `local` from [`--setting-sources`](https://code.claude.com/docs/en/cli-reference).
+With the variable set, Claude Code loads the additional directory's `CLAUDE.md`, `.claude/CLAUDE.md`, `CLAUDE.local.md`, and `.claude/rules/*.md` files except rules that set a [`paths` field](#path-specific-rules). `CLAUDE.local.md` is skipped if you exclude `local` from [`--setting-sources`](https://code.claude.com/docs/en/cli-reference).
 
 ### Organize rules with `.claude/rules/`
 
@@ -207,7 +209,7 @@ paths:
 - Include OpenAPI documentation comments
 ```
 
-Rules without a `paths` field are loaded unconditionally and apply to all files. A path-scoped rule loads when Claude uses the Read, Write, or Edit tool on a matching file. It also loads when Claude views a matching file with a Bash command that [counts as a read](https://code.claude.com/docs/en/tools-reference.md#edit-tool-behavior), such as `cat` or `head` on a single file. Matching also works when Claude reaches a file through a symlinked path to the project directory, for example in a symlinked checkout.
+A path-scoped rule loads when Claude uses the Read, Write, or Edit tool on a matching file. It also loads when Claude views a matching file with a Bash command that [counts as a read](https://code.claude.com/docs/en/tools-reference.md#edit-tool-behavior), such as `cat` or `head` on a single file. Matching also works when Claude reaches a file through a symlinked path to the project directory, for example in a symlinked checkout.
 
 Each pattern is relative to the rule's base directory:
 
@@ -220,10 +222,13 @@ Use glob patterns in the `paths` field to match files by extension, directory, o
 
 | Pattern | Matches |
 | - | - |
-| `**/*.ts` | All TypeScript files in any directory |
-| `src/**/*` | All files under `src/` directory |
-| `*.md` | Markdown files in the project root |
-| `src/components/*.tsx` | React components in a specific directory |
+| `**/*.ts` | `.ts` files anywhere under the base directory |
+| `src/**/*` | All files under the base directory's `src/` |
+| `*.md` | `.md` files anywhere under the base directory |
+| `/*.md` | `.md` files directly in the base directory, not in subfolders |
+| `src/components/*.tsx` | `.tsx` files directly in the base directory's `src/components/`, not in subfolders |
+
+Glob syntax treats `[` as the start of a bracket expression such as `[abc]`. A pattern with a `[` that can't be read as a bracket expression, such as `photos [2024/**`, is invalid: it matches nothing, and the rule's other patterns keep working. To match a literal `[` in a file name, escape it inside single quotes, as in `'photos \[2024/**'`.
 
 You can specify multiple patterns and use brace expansion to match multiple extensions in one pattern:
 
@@ -239,8 +244,6 @@ paths:
 Each brace group multiplies the number of expanded patterns: `src/*.{ts,tsx}` expands to two patterns, and `{a,b}/{c,d}/*.{ts,tsx}` to eight. To keep expansion bounded, a rule's whole `paths` list shares one budget of 1,000 expanded patterns and 4 MiB, and patterns without braces don't count against it.
 
 Claude Code uses any pattern that would exceed the budget unexpanded, and its literal braces match no files.
-
-Glob syntax treats `[` as the start of a bracket expression such as `[abc]`. A pattern with a `[` that can't be read as a bracket expression, such as `photos [2024/**`, is invalid: it matches nothing, and the rule's other patterns keep working. To match a literal `[` in a file name, escape it as `photos \[2024/**`.
 
 #### Rule frontmatter reference
 
@@ -461,7 +464,7 @@ The command prints no output on success. Before you choose the symlink over the 
 * **Editing**: Claude reads `CLAUDE.md` through the link, but the Edit and Write tools [refuse to write through a symlink](https://code.claude.com/docs/en/errors.md#refusing-after-a-symlink-changed), and the refusal directs Claude to edit the link's target, `AGENTS.md`, instead
 * **Windows**: if you or anyone who clones the repository works on Windows, use the `@AGENTS.md` import instead. Creating a symlink there needs Administrator privileges or Developer Mode, and Git checks a committed symlink out as a plain text file unless `core.symlinks` is enabled, which leaves that clone with a one-line `CLAUDE.md` in place of your instructions
 
-With either approach, run `/context` in your next session and confirm `CLAUDE.md` appears under **Memory files**.
+With either approach, run `/context all` in your next session and confirm `CLAUDE.md` appears under **Memory files**.
 
 ### Migrate instructions from other tools
 
@@ -531,7 +534,7 @@ The directory contains a `MEMORY.md` index and one topic file per memory:
 
 ```text theme={null}
 ~/.claude/projects/<project>/memory/
-├── MEMORY.md           # Index, one line per memory, loaded into every session
+├── MEMORY.md           # Index, one line per memory, loaded at session start
 ├── user_role.md        # One memory
 ├── feedback_testing.md # One memory
 └── ...                 # Any other topic files Claude creates
@@ -545,7 +548,7 @@ Claude Code deletes old session transcripts after the [`cleanupPeriodDays`](http
 
 ### How it works
 
-The first 200 lines of `MEMORY.md`, or the first 25KB, whichever comes first, are loaded at the start of every conversation. Content beyond that threshold is not loaded at session start. Claude keeps `MEMORY.md` concise by moving detailed notes into separate topic files.
+While auto memory is on, the first 200 lines or 25KB of `MEMORY.md`, whichever comes first, load at session start. Claude keeps `MEMORY.md` concise by moving detailed notes into separate topic files.
 
 After Claude writes to `MEMORY.md`, Claude Code measures the file against the 200-line and 25KB read limits. If the file is near a limit, Claude Code reminds Claude to shorten it: keep one line per entry, move detail into topic files, and merge or drop stale entries. If the file is over a limit, the write still succeeds, but Claude Code returns an [error telling Claude to rewrite the index](https://code.claude.com/docs/en/errors.md#memory-index-is-over-its-read-limit), because everything past the limit is dropped on the next load.
 
@@ -567,7 +570,7 @@ Auto memory files are plain markdown you can edit or delete at any time. Run [`/
 
 ## View and edit with `/memory`
 
-The `/memory` command lists your CLAUDE.md, CLAUDE.local.md, and other memory file locations across user and project scopes, including user and project CLAUDE.md entries for files that don't exist yet. It also lets you toggle auto memory on or off and provides an option to open the auto memory folder. Select any file to open it in your editor; selecting one that doesn't exist yet creates it first. To check which `CLAUDE.md` and rules files loaded at launch, run `/context`.
+The `/memory` command lists your CLAUDE.md, CLAUDE.local.md, and other memory file locations across user and project scopes. The list includes user and project CLAUDE.md entries for files that don't exist yet. The command also lets you toggle auto memory on or off and provides an option to open the auto memory folder. Select any file to open it in your editor; selecting one that doesn't exist yet creates it first.
 
 GUI editors such as VS Code open the file in a separate window, and you can keep using the session while it's open. Terminal editors such as Vim take over the terminal until you exit.
 
@@ -583,7 +586,7 @@ CLAUDE.md content is delivered as a user message after the system prompt, not as
 
 To debug:
 
-* Run `/context` and check the list under **Memory files** to verify the CLAUDE.md and CLAUDE.local.md files that should load at launch. If one is missing there, Claude can't see it. Use `/memory` to open and edit the files.
+* Run `/context all` and check the list under **Memory files** to verify the CLAUDE.md and CLAUDE.local.md files that should load at launch. If one is missing there, Claude can't see it. Use `/memory` to open and edit the files.
 * If an `Instruction file not loaded` notice appears, see [what it means and what to do about it](https://code.claude.com/docs/en/errors.md#instruction-file-not-loaded).
 * A `CLAUDE.md` in a subdirectory of your working directory doesn't appear under **Memory files**, because it loads on demand rather than at launch. When it loads, a `Loaded` line with its path appears in the terminal. To test a new one, create it from your shell rather than asking Claude to write it, then ask Claude to read a file in that subdirectory.
 * Check that the relevant CLAUDE.md is in a location that gets loaded for your session (see [Choose where to put CLAUDE.md files](#choose-where-to-put-claude-md-files)).

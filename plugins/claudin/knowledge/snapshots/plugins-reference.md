@@ -1,11 +1,11 @@
-<!-- source: https://code.claude.com/docs/en/plugins-reference.md | updated: 2026-10-26T02:54:44.432095+00:00 -->
+<!-- source: https://code.claude.com/docs/en/plugins-reference.md | updated: 2026-11-23T20:50:13.012277+00:00 -->
 > ## Documentation Index
 > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
 # Plugin manifest reference
 
-> Complete reference for plugin.json: every field with its type and default, accepted path forms, and the userConfig and environment variable schemas.
+> Reference for plugin.json: fields with types and defaults, accepted path forms, and the userConfig and environment variable schemas.
 
 A plugin manifest is the `plugin.json` file in a plugin's `.claude-plugin/` directory. It carries the plugin's metadata and the [`userConfig`](#user-configuration) values that Claude Code prompts the user for. It also declares any component that you define inline or keep outside its [default location](#standard-layout).
 
@@ -118,7 +118,7 @@ The command also checks each MCP server entry the plugin declares in `.mcp.json`
 
 ## Fields
 
-The table lists the top-level keys in `plugin.json`. `name` is the only required key. Where a field name is a link, the linked section has its full rules.
+The table lists top-level keys in `plugin.json`. `name` is the only required key. Where a field name is a link, the linked section has its full rules.
 
 For component keys such as `commands` and `hooks`, [Component path forms](#component-path-forms) shows each accepted shape with an example, and every path follows the [path rules](#path-rules) for the `./` prefix, extensions, and containment.
 
@@ -130,7 +130,7 @@ For component keys such as `commands` and `hooks`, [Component path forms](#compo
 | [`version`](#version) | String | Version string. Setting it keeps users on that version until you change it |
 | `description` | String | Short explanation of what the plugin provides |
 | `author` | Object | `name`, which is required, plus optional `email` and `url` |
-| `homepage` | String | Documentation URL. Must parse as a URL, or the plugin fails to load |
+| `homepage` | String | Documentation URL. Must parse as a URL |
 | `repository` | String | Source repository URL. Not validated |
 | `license` | String | SPDX identifier such as `MIT` or `Apache-2.0` |
 | `keywords` | Array of strings | Discovery tags |
@@ -141,8 +141,9 @@ For component keys such as `commands` and `hooks`, [Component path forms](#compo
 | [`privacyPolicyUrl`](#directory-listing-fields) | String | Privacy policy link for the plugin's listing in Anthropic's directory. Claude Code doesn't read it |
 | [`termsOfServiceUrl`](#directory-listing-fields) | String | Terms of service link for the plugin's listing in Anthropic's directory. Claude Code doesn't read it |
 | [`defaultEnabled`](#defaultenabled) | Boolean | Whether the plugin starts enabled when the user hasn't set it. Defaults to `true` |
+| `engines` | Object | The Claude Code versions that the plugin works on, as a [semver range](https://github.com/npm/node-semver#ranges) under the `claude-code` key, such as `"engines": { "claude-code": ">=2.1.400" }`. Requires Claude Code v2.1.323 or later. To keep the plugin working on v2.0.15 through v2.1.75, omit `engines`. Those versions reject the manifest with an `Unrecognized key` error when it has the field |
 | [`dependencies`](#dependencies) | Array of strings or objects | Plugins that must be enabled for this one to work |
-| [`settings`](#settings) | Object | Settings Claude Code applies while the plugin is enabled. Only `agent` and `subagentStatusLine` take effect |
+| `network` | Object | The hosts your plugin reaches, such as `"network": { "hosts": ["api.example.com"] }`, in [`sandbox.network.allowedDomains`](https://code.claude.com/docs/en/settings-reference#sandbox-network-alloweddomains) syntax. `claude plugin validate` lists them. The field doesn't allow or block any host. Requires Claude Code v2.1.328 or later |
 | [`userConfig`](#user-configuration) | Object | Values Claude Code prompts the user for when the plugin is enabled |
 | `types` | Path | A `.d.ts` file that declares the `$.state` values and `$` nouns of a [mod](https://code.claude.com/docs/en/plugins/mods/reference.md#files) |
 | [`channels`](#channels) | Array of objects | Message channels the plugin provides, each bound to one of its MCP servers |
@@ -190,7 +191,7 @@ A version string, not checked against semver. Setting it pins the plugin to that
 
 ### `metadata`
 
-A free-form object for your own data, such as catalog or entitlement fields. Claude Code doesn't read it. Requires Claude Code v2.1.222 or later.
+A free-form object for your own data, such as catalog or entitlement fields. Claude Code doesn't read it.
 
 ### Directory listing fields
 
@@ -211,10 +212,6 @@ Once a user's `enabledPlugins` entry is written, it persists across plugin updat
 ### `dependencies`
 
 Plugins that must be enabled for this one to work. Each entry is `"name"`, `"name@marketplace"`, or `{ "name": "...", "marketplace": "...", "version": "..." }`. Bare names resolve against this plugin's own marketplace. See [dependency constraints](https://code.claude.com/docs/en/plugins/dependencies.md).
-
-### `settings`
-
-Settings Claude Code applies while the plugin is enabled. Only `agent` and `subagentStatusLine` take effect; other keys are dropped at load. A `settings.json` at the plugin root takes precedence over this key. See [Default settings](https://code.claude.com/docs/en/plugins/components.md#default-settings).
 
 ## Component path forms
 
@@ -312,8 +309,8 @@ An `mcpServers` value takes one of these shapes:
 | Shape | Example value | What Claude Code does |
 | :- | :- | :- |
 | `.json` file path | `"./mcp/servers.json"` | Reads the file as an `mcpServers` map |
-| MCP bundle path | `"./bundle.mcpb"` | Extracts the `.mcpb` or `.dxt` bundle into `.mcpb-cache/` under the plugin root and reads its server config |
-| MCP bundle URL | `"https://example.com/server.mcpb"` | Downloads the bundle into `.mcpb-cache/`, then reads it |
+| MCP bundle path | `"./bundle.mcpb"` | Extracts the `.mcpb` or `.dxt` bundle into `mcpb/` under the [plugins root](https://code.claude.com/docs/en/plugins/loading.md#find-plugins-on-disk) and reads its server config |
+| MCP bundle URL | `"https://example.com/server.mcpb"` | Downloads the bundle, then extracts and reads it the same way |
 | Inline map | `{ "deploy-api": { "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/server.js"] } }` | Uses the map as server configs keyed by name |
 
 A bundle path or URL must end in `.mcpb` or `.dxt`. Any other extension fails validation.
@@ -395,7 +392,7 @@ A monitor `command` can't reference `${user_config.*}`. See [Fields that run thr
 
 Every component path in a manifest is relative to the plugin root and must start with `./`. A path such as `commands/foo.md` fails validation. `skills` and `mcpServers` each accept one form outside that rule:
 
-* **`skills`**: also accepts `"."`. Both `"."` and `"./"` denote the plugin root. Before v2.1.221, `"."` failed manifest validation, so use `"./"` when the plugin must load on earlier versions
+* **`skills`**: also accepts `"."`. Both `"."` and `"./"` denote the plugin root
 * **`mcpServers`**: also accepts an `https://` bundle URL
 
 `experimental.evals` isn't a component path, so the rules in this section don't cover it, and `claude plugin eval` checks the value when it runs instead. It names a directory below the plugin root, such as `"quality/evals"`, with or without the `./` prefix. With an array, only the first entry is used. For what the value accepts and what happens with an unusable one, see [Use a different eval directory](https://code.claude.com/docs/en/plugin-evals.md#use-a-different-eval-directory).
@@ -404,7 +401,7 @@ Every component path in a manifest is relative to the plugin root and must start
 
 Every component path must resolve inside the plugin root and must exist. `claude plugin validate` checks the paths under every component key:
 
-* **Containment**: a path that resolves outside the plugin root doesn't load, and the `/plugin` **Errors** tab shows `<component> path escapes plugin directory: <path>`. A path containing `..` is the usual case, and `claude plugin validate` reports the error `Path contains ".." which could be a path traversal attempt`
+* **Containment**: a path that resolves outside the plugin root doesn't load, and the `/plugin` **Errors** tab shows `<component> path escapes plugin directory: <path>`. A path containing `..` is the usual case, and `claude plugin validate` reports the error `Path contains ".." which could be a path traversal attempt`. For an `mcpServers` or `lspServers` file, a [`path not read`](https://code.claude.com/docs/en/errors#server-file-path-not-read) message means the path is absolute or contains `..`
 * **Existence**: a path that doesn't exist doesn't load, and the `/plugin` **Errors** tab shows `<component> path not found: <path>`. `claude plugin validate` reports the error `Path not found`
 
 For `outputStyles`, `lspServers`, `monitors`, and `themes` paths, the `claude plugin validate` check requires Claude Code v2.1.283 or later.
@@ -572,7 +569,7 @@ In each plugin component, `${...}` references resolve inline in specific fields,
 | :- | :- | :- |
 | Hook commands | Anywhere in `command` and `args` | `CLAUDE_PLUGIN_ROOT`, `CLAUDE_PLUGIN_DATA`, `CLAUDE_PROJECT_DIR`, and `CLAUDE_PLUGIN_OPTION_<KEY>` |
 | Monitor commands | Anywhere in `command` | Not exported |
-| MCP `stdio` servers | `command`, `args`, `env` | `CLAUDE_PLUGIN_ROOT`, `CLAUDE_PLUGIN_DATA` |
+| MCP `stdio` servers | `command`, `args`, `env` | `CLAUDE_PLUGIN_ROOT`, `CLAUDE_PLUGIN_DATA`, `CLAUDE_PROJECT_DIR` |
 | MCP `http`, `sse`, `ws` servers | `url`, `headers`, `headersHelper` | Not applicable |
 | LSP servers | `command`, `args`, `env`, `workspaceFolder` | `CLAUDE_PLUGIN_ROOT`, `CLAUDE_PLUGIN_DATA`, `CLAUDE_PROJECT_DIR` |
 | Skill, command, and agent content | Anywhere in the Markdown body | Not applicable |
@@ -627,9 +624,8 @@ Each component type has a default location under the plugin root, used when the 
 | Themes | `themes/` | Theme JSON files |
 | Monitors | `monitors/monitors.json` | The monitors array |
 | Executables | `bin/` | Files here are on the Bash tool's `PATH` while the plugin is enabled, so Claude runs them as bare commands. claude.ai and Cowork don't install a plugin that has this directory, including one you [distribute through claude.ai organization settings](https://claude.com/docs/plugins/org-sync#keep-executables-out-of-the-top-level-bin-directory) |
-| Settings | `settings.json` | `agent` and `subagentStatusLine` defaults applied while the plugin is enabled |
 
-A plugin that uses every default location, plus a `scripts/` folder that its hooks call, is laid out like this:
+A plugin that uses default locations, plus a `scripts/` folder that its hooks call, is laid out like this:
 
 ```text theme={null}
 deploy-tools/
@@ -656,7 +652,6 @@ deploy-tools/
 │   └── deploy-tool
 ├── scripts/
 │   └── format.sh
-├── settings.json
 ├── .mcp.json
 └── .lsp.json
 ```
