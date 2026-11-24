@@ -42,6 +42,11 @@ class FixtureTest(unittest.TestCase):
         files = {".claude/skills/de​ploy/SKILL.md": "---\ndescription: Faz deploy.\n---\n"}
         self.assertEqual({f.rule_id for f in findings_for(files)}, {"SKILL-004"})
 
+    def test_agent004_has_no_upper_limit(self) -> None:
+        # A doc de 2026-11-23 tirou o teto de 1000000; só o mínimo vale.
+        agent = "---\nname: x\ndescription: Faz x.\nautoCompactWindow: 2000000\n---\n\nCorpo.\n"
+        self.assertEqual(findings_for({".claude/agents/x.md": agent}), [])
+
     def test_perm001_star_path_and_grep(self) -> None:
         # A doc só desconsidera caminho diferente de `*`; Grep entrou na lista no snapshot de 2026-11-16.
         def rules(entry: str) -> set[str]:

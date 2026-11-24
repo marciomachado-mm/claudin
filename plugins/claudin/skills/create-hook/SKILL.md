@@ -68,7 +68,7 @@ Confira cada item na seção do evento escolhido:
   depende do evento (tabela "Exit code 2 behavior per event"). Qualquer outro código, ou
   falha ao iniciar, ou JSON inválido, é erro **não bloqueante**: a ação segue
 - **Hook de proteção falha aberto por padrão.** Se ele quebrar, tudo passa. Em hook que
-  protege algo, use `"onFailure": "block"` (v2.1.295+)
+  protege algo, use `"onFailure": "block"` (v2.1.295+; em hook `mcp_tool`, v2.1.328+)
 - **JSON de decisão** tem formato próprio por evento (ex: `permissionDecision` no
   `PreToolUse`). Para devolver decisão em JSON, saia com 0. Logs vão para stderr, nunca
   misturados ao JSON no stdout

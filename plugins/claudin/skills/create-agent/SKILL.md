@@ -49,7 +49,7 @@ Descubra o que puder no repositório antes de perguntar. Pergunte só o que é d
 
 Campos opcionais, só se houver motivo: `maxTurns`, `skills` (pré-carrega o conteúdo
 inteiro), `memory` (`user`, `project`, `local`), `isolation: worktree`, `background`,
-`effort`, `color`, `autoCompactWindow` (inteiro puro de 100000 a 1000000, v2.1.296+),
+`effort`, `color`, `autoCompactWindow` (inteiro puro de 100000 ou mais, v2.1.296+),
 `omitClaudeMd`.
 
 **`permissionMode` não garante restrição:** se a conversa principal está em

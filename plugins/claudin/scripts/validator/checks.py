@@ -40,7 +40,7 @@ CONTENT_FIELDS = {
 RULE_RE = re.compile(r"^(?P<tool>[A-Za-z_][\w]*)\((?P<spec>.*)\)$")
 SKILL_DESCRIPTION_LIMIT = 1536
 AGENT_NAME_LIMIT = 256
-AUTO_COMPACT_RANGE = (100_000, 1_000_000)
+AUTO_COMPACT_MIN = 100_000
 ON_DEMAND_CHAR_LIMIT = 40_000
 
 
@@ -199,19 +199,18 @@ def agent_unknown_fields(t: Target) -> Iterator[tuple[Path, str]]:
 
 @rule(
     "AGENT-004", severity="error",
-    title="autoCompactWindow é inteiro na faixa aceita",
+    title="autoCompactWindow é inteiro a partir do mínimo",
     source="sub-agents.md",
-    evidence="a token count from `100000` to `1000000`",
+    evidence="a token count of `100000` or more",
     since="2.1.296",
 )
 def agent_auto_compact(t: Target) -> Iterator[tuple[Path, str]]:
-    low, high = AUTO_COMPACT_RANGE
     for f in _parsed(t.agents):
         value = f.fm.text("autoCompactWindow")
         if value is None:
             continue
-        if not value.isdigit() or not low <= int(value) <= high:
-            yield f.path, f"autoCompactWindow '{value}' é ignorado: use inteiro puro entre {low} e {high} (200k vira 200)"
+        if not value.isdigit() or int(value) < AUTO_COMPACT_MIN:
+            yield f.path, f"autoCompactWindow '{value}' é ignorado: use inteiro puro a partir de {AUTO_COMPACT_MIN} (200k vira 200)"
 
 
 @rule(
