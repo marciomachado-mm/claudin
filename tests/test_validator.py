@@ -63,6 +63,22 @@ class FixtureTest(unittest.TestCase):
         }
         self.assertEqual(findings_for(files), [])
 
+    def test_plugin_skill_category_listed_in_manifest_is_not_flagged(self) -> None:
+        # A chave `skills` do manifesto soma pastas; a da categoria não é uma skill.
+        files = {
+            ".claude-plugin/plugin.json": '{"name": "demo", "skills": ["./skills/eng/tdd"]}\n',
+            "skills/eng/tdd/SKILL.md": "---\ndescription: Faz TDD.\n---\n",
+        }
+        self.assertEqual(findings_for(files), [])
+
+    def test_plugin_skill_folder_not_in_manifest_is_still_flagged(self) -> None:
+        files = {
+            ".claude-plugin/plugin.json": '{"name": "demo", "skills": ["./skills/eng/tdd"]}\n',
+            "skills/eng/tdd/SKILL.md": "---\ndescription: Faz TDD.\n---\n",
+            "skills/vazia/README.md": "Sem SKILL.md.\n",
+        }
+        self.assertEqual([(f.rule_id, f.path) for f in findings_for(files)], [("SKILL-001", "skills/vazia")])
+
 
 class TraceabilityTest(unittest.TestCase):
     """Cada regra aponta para um trecho que ainda existe na doc oficial."""

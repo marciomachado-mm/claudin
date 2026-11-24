@@ -7,6 +7,7 @@ um campo novo na doc quebra o teste em vez de virar falso positivo em silêncio.
 
 from __future__ import annotations
 
+import json
 import re
 import unicodedata
 from collections.abc import Iterator
@@ -46,6 +47,26 @@ ON_DEMAND_CHAR_LIMIT = 40_000
 
 def _parsed(files: list[MarkdownFile]) -> Iterator[MarkdownFile]:
     return (f for f in files if f.error is None and f.fm.present)
+
+
+def _manifest_skill_paths(t: Target) -> list[Path]:
+    """Pastas da chave `skills` do plugin.json, que somam à `skills/` (plugins-reference.md).
+
+    Um plugin que agrupa skills por categoria lista `./skills/<categoria>/<nome>`: a pasta
+    da categoria não tem SKILL.md e não precisa ter.
+    """
+    if not t.is_plugin:
+        return []
+    try:
+        manifest = json.loads((t.root / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return []
+    entries = manifest.get("skills") if isinstance(manifest, dict) else None
+    if isinstance(entries, str):
+        entries = [entries]
+    if not isinstance(entries, list):
+        return []
+    return [(t.root / e).resolve() for e in entries if isinstance(e, str)]
 
 
 def _bad_name_chars(name: str) -> list[str]:
@@ -93,9 +114,11 @@ def frontmatter_parses(t: Target) -> Iterator[tuple[Path, str]]:
     evidence="Create a `SKILL.md` file with instructions",
 )
 def skill_has_file(t: Target) -> Iterator[tuple[Path, str]]:
+    declared = _manifest_skill_paths(t)
     for d in t.skill_dirs:
-        if not (d / "SKILL.md").is_file():
-            yield d, "pasta de skill sem SKILL.md: a skill não é descoberta"
+        if (d / "SKILL.md").is_file() or any(d in p.parents for p in declared):
+            continue
+        yield d, "pasta de skill sem SKILL.md: a skill não é descoberta"
 
 
 @rule(
