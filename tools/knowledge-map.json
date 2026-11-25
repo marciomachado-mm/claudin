@@ -69,6 +69,11 @@
     ],
     "plugins/claudin/skills/design/SKILL.md": [],
     "plugins/claudin/skills/fix/SKILL.md": [],
-    "plugins/claudin/skills/grill-me/SKILL.md": []
+    "plugins/claudin/skills/grill-me/SKILL.md": [],
+    "plugins/claudin/skills/handoff/SKILL.md": [
+      "best-practices",
+      "cli-reference",
+      "features-overview"
+    ]
   }
 }

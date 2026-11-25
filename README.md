@@ -8,8 +8,8 @@ Code puro.
 
 > Em construção. Hoje: `/claudin:audit`, `/claudin:fix`, `/claudin:design`,
 > `/claudin:create-project`, `/claudin:create-agent`, `/claudin:create-skill`,
-> `/claudin:create-hook`, `/claudin:grill-me` e `/claudin:about`. A avaliação comparativa
-> com o Claude Code puro está em andamento.
+> `/claudin:create-hook`, `/claudin:grill-me`, `/claudin:handoff` e `/claudin:about`. A
+> avaliação comparativa com o Claude Code puro está em andamento.
 
 ## Instalar
 
@@ -69,7 +69,8 @@ do Claude Code. Pull requests de terceiros não são aceitos.
 O protocolo de `/claudin:grill-me` e o vocabulário de
 `knowledge/guides/writing-for-agents.md` são adaptados de
 [mattpocock/skills](https://github.com/mattpocock/skills), licença MIT,
-Copyright (c) Matt Pocock.
+Copyright (c) Matt Pocock. A ideia de `/claudin:handoff` vem da skill `handoff` do mesmo
+repositório; o texto é nosso.
 
 ## Licença
 
