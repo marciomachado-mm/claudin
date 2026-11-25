@@ -310,6 +310,39 @@ def instruction_size(t: Target) -> Iterator[tuple[Path, str]]:
                          "e o resto só se ler o arquivo; divida em rules menores")
 
 
+CODE_RE = re.compile(r"```.*?```|~~~.*?~~~|`[^`\n]*`", re.S)
+
+
+def _imports(path: Path, target: str) -> bool:
+    """O arquivo importa `target` com `@` fora de código (memory.md: imports em code span não valem)."""
+    text = CODE_RE.sub("", path.read_text(encoding="utf-8", errors="replace"))
+    return re.search(rf"(?<![\w@])@(?:\./)?{re.escape(target)}(?![\w.-])", text) is not None
+
+
+@rule(
+    "INSTR-002", severity="warn",
+    title="AGENTS.md não fica esquecido ao lado de um CLAUDE.md",
+    source="memory.md",
+    evidence="| An `AGENTS.md` and a `CLAUDE.md` or `CLAUDE.local.md` in your working directory or above it | Your `CLAUDE.md` files only |",
+    since="2.1.277",
+)
+def agents_md_shadowed(t: Target) -> Iterator[tuple[Path, str]]:
+    if t.is_plugin:
+        return
+    agents = t.root / "AGENTS.md"
+    if not agents.is_file():
+        return
+    claude_files = [p for p in (t.root / "CLAUDE.md", t.root / ".claude" / "CLAUDE.md", t.root / "CLAUDE.local.md") if p.is_file()]
+    if not claude_files:
+        return
+    # Link simbólico para o AGENTS.md conta como import (memory.md, "imports or symlinks to")
+    if any(p.resolve() == agents.resolve() or _imports(p, "AGENTS.md") for p in claude_files):
+        return
+    names = ", ".join(p.relative_to(t.root).as_posix() for p in claude_files)
+    yield agents, (f"com {names} no projeto, o Claude não lê este AGENTS.md (padrão claude-md-or-agents-md): "
+                   "importe-o com uma linha `@AGENTS.md` no CLAUDE.md, ou mude Project instructions no /config")
+
+
 # --- Settings e permissões ---------------------------------------------------------
 
 

@@ -73,19 +73,24 @@ e o resultado chegaria fora deste fluxo (`sub-agents.md`, v2.1.302).
    `.claude/` (skills, agents, rules, commands, hooks, settings), `.mcp.json`, `.gitignore`.
    Em plugin: `skills/`, `agents/`, `hooks/`, `.mcp.json`. Leia cada arquivo do mapa.
    O mapa fica dentro do alvo: o que vem de fora dele (`~/.claude/`, hook ou script de
-   outro repo) você só nomeia como origem do achado, sem abrir
+   outro repo) você só nomeia como origem do achado, sem abrir.
+   Siga os imports `@caminho` (fora de bloco de código) dos arquivos de instrução: o
+   importado carrega junto com quem importa (`memory.md`). `CLAUDE.md` que é só
+   `@AGENTS.md` é o jeito de dividir instruções com outras ferramentas: avalie o conteúdo
+   no `AGENTS.md`, não acuse o `CLAUDE.md` de curto ou sem comandos
 2. Os achados do validador já vêm explicados: não os repita, só use a severidade deles
 3. Procure o que o validador não decide, com o catálogo de anti-padrões na mão:
    - skill com efeito colateral sem `disable-model-invocation: true`
    - description vaga, que não diz quando usar
    - agente sem `tools:` ou com tools além do que o corpo usa
    - `model:` fixo onde o trabalho exige julgamento
-   - CLAUDE.md sem comandos, longo, ou repetindo o que o ambiente já diz
+   - CLAUDE.md (com o que ele importa) sem comandos, longo, ou repetindo o que o
+     ambiente já diz
    - rule sem `paths:` que só vale para uma área
    - `settings.local.json` fora do `.gitignore`; settings sem `permissions`
    - instrução que contradiz outra, ou que o modelo já segue sozinho
 4. Estime o contexto fixo por sessão (cerca de 4 caracteres por token): CLAUDE.md ou
-   AGENTS.md carregado, rules sem `paths:`, descriptions de skills chamáveis pelo Claude,
+   AGENTS.md carregado, somando os arquivos que ele importa, rules sem `paths:`, descriptions de skills chamáveis pelo Claude,
    descriptions de agentes, servidores em `.mcp.json`. É estimativa: não inclui o prompt do
    sistema nem skills sincronizadas da claude.ai
 

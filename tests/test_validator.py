@@ -80,6 +80,35 @@ class FixtureTest(unittest.TestCase):
         self.assertEqual([(f.rule_id, f.path) for f in findings_for(files)], [("SKILL-001", "skills/vazia")])
 
 
+class AgentsMdTest(unittest.TestCase):
+    """INSTR-002: AGENTS.md ao lado de um CLAUDE.md só é lido se o CLAUDE.md o importar."""
+
+    def ids(self, files: dict[str, str]) -> list[str]:
+        return [f.rule_id for f in findings_for(files)]
+
+    def test_only_agents_md_is_fine(self) -> None:
+        self.assertEqual(self.ids({"AGENTS.md": "# P\n"}), [])
+
+    def test_local_claude_md_also_shadows(self) -> None:
+        self.assertEqual(self.ids({"AGENTS.md": "# P\n", "CLAUDE.local.md": "minhas notas\n"}), ["INSTR-002"])
+
+    def test_import_in_dot_claude_counts(self) -> None:
+        self.assertEqual(self.ids({"AGENTS.md": "# P\n", ".claude/CLAUDE.md": "@./AGENTS.md\n"}), [])
+
+    def test_import_inside_code_block_does_not_count(self) -> None:
+        files = {"AGENTS.md": "# P\n", "CLAUDE.md": "Exemplo:\n\n```\n@AGENTS.md\n```\n"}
+        self.assertEqual(self.ids(files), ["INSTR-002"])
+
+    def test_symlink_to_agents_md_counts(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = materialize({"AGENTS.md": "# P\n"}, Path(tmp))
+            try:
+                (root / "CLAUDE.md").symlink_to("AGENTS.md")
+            except OSError:
+                self.skipTest("sem permissão para criar link simbólico")
+            self.assertEqual([f.rule_id for f in run(Target(root))], [])
+
+
 class TraceabilityTest(unittest.TestCase):
     """Cada regra aponta para um trecho que ainda existe na doc oficial."""
 

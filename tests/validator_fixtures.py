@@ -58,6 +58,8 @@ GOOD_PROJECT: Files = {
     ".claude/rules/sem-frontmatter.md": "Sempre rode os testes.\n",
     "src/CLAUDE.md": "# src\n\nCódigo da aplicação. Testes em `tests/`.\n",
     ".claude/settings.json": GOOD_SETTINGS,
+    "CLAUDE.md": "@AGENTS.md\n\nSó para o Claude: rode `make test` antes de concluir.\n",
+    "AGENTS.md": "# Projeto\n\nInstruções comuns a todas as ferramentas.\n",
 }
 
 GOOD_PLUGIN: Files = {
@@ -96,6 +98,10 @@ BAD_CASES: dict[str, Files] = {
     "INSTR-001": {
         ".claude/rules/placeholder.md": "Regra sem paths, carrega sempre.\n",
         "services/api/CLAUDE.md": "# API\n\n" + ("Instrução longa demais. " * 1800),
+    },
+    "INSTR-002": {
+        "CLAUDE.md": "# Projeto\n\nVeja o `@AGENTS.md` para as regras.\n",
+        "AGENTS.md": "# Projeto\n\nRegras comuns.\n",
     },
     "RULE-001": {".claude/rules/r.md": "---\npaths: src/**\nalwaysApply: true\n---\n\nRegra.\n"},
     "SET-001": {".claude/settings.json": '{\n  // comentário\n  "model": "sonnet",\n}\n'},
