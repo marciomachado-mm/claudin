@@ -114,11 +114,30 @@ def frontmatter_parses(t: Target) -> Iterator[tuple[Path, str]]:
     evidence="Create a `SKILL.md` file with instructions",
 )
 def skill_has_file(t: Target) -> Iterator[tuple[Path, str]]:
-    declared = _manifest_skill_paths(t)
+    if _manifest_skill_paths(t):
+        return  # o manifesto escolhe as pastas: a pasta de fora pode ser de propósito (SKILL-006)
     for d in t.skill_dirs:
-        if (d / "SKILL.md").is_file() or any(d in p.parents for p in declared):
+        if not (d / "SKILL.md").is_file():
+            yield d, "pasta de skill sem SKILL.md: a skill não é descoberta"
+
+
+@rule(
+    "SKILL-006", severity="warn",
+    title="Pasta fora da chave skills do plugin.json não carrega",
+    source="plugins-reference.md",
+    evidence="The `skills/` directory is still scanned, and the listed directories load alongside it",
+)
+def skill_dir_outside_manifest(t: Target) -> Iterator[tuple[Path, str]]:
+    # Com a chave `skills`, deixar uma pasta de fora costuma ser escolha (rascunho, coleção
+    # não publicada); sem ela, a pasta vazia é quase sempre engano, e quem acusa é a SKILL-001.
+    declared = _manifest_skill_paths(t)
+    if not declared:
+        return
+    for d in t.skill_dirs:
+        if (d / "SKILL.md").is_file() or any(d in p.parents or d == p for p in declared):
             continue
-        yield d, "pasta de skill sem SKILL.md: a skill não é descoberta"
+        yield d, ("pasta sem SKILL.md e fora da chave skills do plugin.json: as skills dela não carregam. "
+                  "Se é de propósito (rascunho, coleção não publicada), tudo bem; se não, liste a pasta no manifesto")
 
 
 @rule(

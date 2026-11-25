@@ -71,13 +71,23 @@ class FixtureTest(unittest.TestCase):
         }
         self.assertEqual(findings_for(files), [])
 
-    def test_plugin_skill_folder_not_in_manifest_is_still_flagged(self) -> None:
+    def test_plugin_skill_folder_not_in_manifest_is_a_warning(self) -> None:
+        # Com a chave `skills`, a pasta de fora pode ser de propósito: aviso, não erro
         files = {
             ".claude-plugin/plugin.json": '{"name": "demo", "skills": ["./skills/eng/tdd"]}\n',
             "skills/eng/tdd/SKILL.md": "---\ndescription: Faz TDD.\n---\n",
             "skills/vazia/README.md": "Sem SKILL.md.\n",
         }
-        self.assertEqual([(f.rule_id, f.path) for f in findings_for(files)], [("SKILL-001", "skills/vazia")])
+        found = [(f.rule_id, f.severity, f.path) for f in findings_for(files)]
+        self.assertEqual(found, [("SKILL-006", "warn", "skills/vazia")])
+
+    def test_plugin_without_skills_key_keeps_the_error(self) -> None:
+        files = {
+            ".claude-plugin/plugin.json": '{"name": "demo"}\n',
+            "skills/vazia/README.md": "Sem SKILL.md.\n",
+        }
+        found = [(f.rule_id, f.severity) for f in findings_for(files)]
+        self.assertEqual(found, [("SKILL-001", "error")])
 
 
 class AgentsMdTest(unittest.TestCase):

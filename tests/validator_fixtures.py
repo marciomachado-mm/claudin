@@ -85,6 +85,11 @@ BAD_CASES: dict[str, Files] = {
     "SKILL-003": {".claude/skills/s/SKILL.md": f"---\ndescription: {'x' * 1600}\n---\n"},
     "SKILL-004": {".claude/skills/s/SKILL.md": "---\nname: deploy <prod>\ndescription: Faz deploy.\n---\n"},
     "SKILL-005": {".claude/skills/s/SKILL.md": "---\ndescription: Faz algo.\nallowed_tools: Read\n---\n"},
+    "SKILL-006": {
+        ".claude-plugin/plugin.json": '{"name": "demo", "skills": ["./skills/eng/tdd"]}\n',
+        "skills/eng/tdd/SKILL.md": "---\ndescription: Faz TDD.\n---\n",
+        "skills/rascunhos/ideia/SKILL.md": "---\ndescription: Ainda não publicada.\n---\n",
+    },
     "AGENT-001": {".claude/agents/x.md": "---\nname: x\n---\n\nCorpo.\n"},
     "AGENT-002": {".claude/agents/x.md": _agent("", name="meu-plugin:x")},
     "AGENT-003": {".claude/agents/x.md": _agent("max_turns: 5\n")},
