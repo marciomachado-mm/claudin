@@ -65,7 +65,8 @@
       "memory"
     ],
     "plugins/claudin/skills/create-skill/SKILL.md": [
-      "skills"
+      "skills",
+      "best-practices"
     ],
     "plugins/claudin/skills/design/SKILL.md": [],
     "plugins/claudin/skills/fix/SKILL.md": [],

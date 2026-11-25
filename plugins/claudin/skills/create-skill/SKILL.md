@@ -31,20 +31,31 @@ Se alguém vai querer
 acontecer **sempre** num evento, é hook. Fora do caso de skill, proponha o recurso certo e
 pare, a menos que o usuário insista.
 
+**Pedido de verificação** ("conferir se funciona", "rodar antes do commit", "testar a
+mudança"): o Claude Code já traz o `/verify`, que compila e roda o app e grava a receita
+que deu certo em `.claude/skills/verify/SKILL.md` (`skills.md`). Ofereça rodar o `/verify`
+uma vez antes de escrever à mão; escreva a skill quando o usuário já sabe quais checks
+quer, ou quando a receita gravada não basta. Nesse caso, siga o passo 2 com o modelo de
+verificação do passo 3.
+
 ## 2. Decida as peças
 
 Escreva o corpo seguindo o guia `writing-for-agents`. Pergunte só o que é decisão:
 
 - **Quem chama** (`skills.md`, tabela de invocação):
   - efeito colateral (deploy, commit, envio, escrita) → `disable-model-invocation: true`;
-    a description também sai do contexto
+    a description também sai do contexto. Exceção: a skill de verificação, abaixo
   - conhecimento de fundo, que não é ação → `user-invocable: false`
   - os dois chamam → nenhum dos campos
 - **`description`:** o caso de uso principal primeiro. Gatilhos extras vão em
   `when_to_use`. A soma é cortada em 1.536 caracteres
 - **Nome:** é o nome da pasta, em minúsculas e hífens. Sem `<`, `>`, espaço invisível ou
-  duplicado. A pasta não pode se chamar `synced`. Uma skill `verify` ou `simplify` passa a
-  ser rodada antes de cada commit (v2.1.286+, `skills.md`)
+  duplicado. A pasta não pode se chamar `synced`
+- **Skill de verificação:** com o nome `verify` (ou `simplify`), o Claude a roda antes de
+  cada commit, salvo em mudança só de docs ou testes (v2.1.286+, `skills.md`). Só vale se
+  ela estiver no projeto, nas pessoais ou nas da empresa (de plugin não conta), se o Claude puder chamá-la (**sem**
+  `disable-model-invocation`, mesmo rodando comandos) e com `includeGitInstructions`
+  ligado. Outro nome não ganha esse gatilho
 - **Isolamento:** `context: fork` roda num subagente sem a conversa, escolhido em `agent`.
   O padrão é rodar em background; `background: false` espera o resultado no turno
   (v2.1.218+). Só use fork se a skill não precisa conversar
@@ -71,7 +82,37 @@ argument-hint: "<argumento>"
 ## 2. Confirme antes de agir
 <se escreve, publica ou envia: mostre o resultado e só execute após confirmação>
 
+## 3. Verifique
+<o check que volta passou/falhou: teste, build, linter, script que compara com o esperado>
+Mostre o comando e a saída. Falhou: corrija e rode de novo antes de dizer que terminou.
+
 Pronto quando <condição verificável>.
+```
+
+O passo "Verifique" entra quando a skill produz algo que dá para checar (código, arquivo,
+deploy). Sem check possível, o último passo diz o que ficou sem verificar. A doc pede
+evidência, não "os testes passaram" (`best-practices.md`, Give Claude a check to run).
+
+Modelo para a skill de verificação:
+
+```markdown
+---
+name: verify
+description: Confere que a mudança funciona rodando os checks do projeto e mostrando a saída. Use antes de dizer que terminou e antes de cada commit.
+allowed-tools:
+  - Bash(<comando do check> *)
+---
+
+Rode cada check sozinho, do mais rápido ao mais lento:
+
+1. `<lint ou typecheck>`
+2. `<testes da parte mexida>`
+3. `<o comportamento de verdade: rodar o app, o script, a consulta>`
+
+Mostre o comando e a saída de cada um. Se um falhar, pare, corrija e rode de novo a
+partir dele. Não diga que terminou com check falhando ou sem rodar.
+
+Pronto quando todos passaram e a saída de cada um está na resposta.
 ```
 
 Mostre a estrutura e o conteúdo
