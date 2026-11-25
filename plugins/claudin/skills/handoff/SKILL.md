@@ -2,7 +2,7 @@
 name: handoff
 description: Fecha o trabalho da sessão num HANDOFF.md (objetivo, estado, decisões, o que não funcionou e próximo passo) para uma sessão nova, outra pessoa ou outra ferramenta continuar de onde parou.
 disable-model-invocation: true
-argument-hint: "[caminho do arquivo]"
+argument-hint: "[caminho.md] [notas sobre a sessão]"
 allowed-tools:
   - Bash(git status *)
   - Bash(git log *)
@@ -21,9 +21,11 @@ Claude que envie a ela (`features-overview.md`).
 
 ## 1. Onde escrever
 
-O caminho vem do argumento: $ARGUMENTS
+Argumento: $ARGUMENTS
 
-Sem argumento, use `HANDOFF.md` na raiz do repositório. Se o arquivo já existir, leia
+Se ele começar por um caminho terminado em `.md`, escreva nele; senão, use `HANDOFF.md` na
+raiz do repositório. O resto do argumento são notas do usuário sobre a sessão (o que
+tentou, o que decidiu): elas valem como a conversa e entram no arquivo. Se o arquivo já existir, leia
 antes: ele é a passagem anterior. Reescreva com o estado de agora e mantenha só o que
 ainda vale (uma tentativa que falhou continua valendo).
 
