@@ -14,6 +14,17 @@ Escolha o interpretador pelo sistema antes do primeiro comando: `python` no Wind
 python ${CLAUDE_PLUGIN_ROOT}/scripts/kb.py about
 ```
 
-Mostre a saída em português: nome e versão, e cada comando com a sua descrição. Diga que o
-claudin está em construção e que instalação, novidades e como reportar um problema ficam em
-https://github.com/marciomachado-mm/claudin.
+O comando também consulta o `plugin.json` da `main` no GitHub para saber se há versão nova.
+Sem rede, ele só diz que não conseguiu conferir; isso não é erro.
+
+Mostre a saída em português: nome e versão, e cada comando com a sua descrição. Depois,
+a situação da versão, como o comando disse:
+
+- **Versão nova:** dê os dois comandos para o usuário digitar, um de cada vez. Você não
+  consegue rodar comandos `/plugin`; quem digita é ele
+- **Pasta local:** explique que a atualização automática não traz versão nova nesse caso e
+  dê as duas saídas que o comando listou
+- **Não conferiu:** diga em uma frase, sem insistir
+
+Diga que o claudin está em construção e que instalação, novidades e como reportar um
+problema ficam em https://github.com/marciomachado-mm/claudin.

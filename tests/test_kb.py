@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -61,3 +62,60 @@ class KbTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def _plugin_root(base: Path, with_clone: bool) -> Path:
+    root = base / "plugins" / "claudin"
+    root.mkdir(parents=True)
+    if with_clone:
+        (base / ".git").mkdir()
+        (base / ".claude-plugin").mkdir()
+        (base / ".claude-plugin" / "marketplace.json").write_text("{}", encoding="utf-8")
+    return root
+
+
+class UpdateStatusTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.base = Path(self.tmp.name)
+
+    def status(self, installed: str, remote, with_clone: bool = False) -> str:
+        def fetch(url: str) -> str:
+            if isinstance(remote, Exception):
+                raise remote
+            return remote
+
+        root = _plugin_root(self.base, with_clone)
+        return "\n".join(kb.update_status(installed, root, fetch))
+
+    def test_newer_version_tells_the_command_to_type(self) -> None:
+        out = self.status("0.8.3", '{"version": "0.9.0"}')
+        self.assertIn("0.9.0", out)
+        self.assertIn("/plugin marketplace update claudin", out)
+
+    def test_same_version_is_up_to_date(self) -> None:
+        self.assertIn("mais recente", self.status("0.9.0", '{"version": "0.9.0"}'))
+
+    def test_version_compare_is_numeric(self) -> None:
+        self.assertIn("Versão nova", self.status("0.9.9", '{"version": "0.10.0"}'))
+
+    def test_no_network_is_not_an_error(self) -> None:
+        self.assertIn("Não consegui conferir", self.status("0.8.3", OSError("offline")))
+
+    def test_bad_json_is_not_an_error(self) -> None:
+        self.assertIn("Não consegui conferir", self.status("0.8.3", "<html>proxy</html>"))
+
+    def test_clone_says_auto_update_brings_nothing(self) -> None:
+        out = self.status("0.8.3", '{"version": "0.9.0"}', with_clone=True)
+        self.assertIn("pasta local", out)
+        self.assertIn("git pull", out)
+
+    def test_installed_copy_under_claude_plugins_is_not_a_clone(self) -> None:
+        base = self.base / ".claude" / "plugins" / "marketplaces" / "claudin"
+        root = _plugin_root(base, with_clone=True)
+        self.assertFalse(kb.loaded_from_clone(root))
+
+    def test_offline_skips_the_check(self) -> None:
+        root = _plugin_root(self.base, with_clone=False)
+        self.assertEqual(kb.update_status("0.8.3", root, offline=True), [])
