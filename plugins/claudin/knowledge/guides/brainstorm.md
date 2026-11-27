@@ -15,9 +15,10 @@ Converse até conseguir dizer o problema em uma ou duas frases que o usuário re
 como dele: o que ele quer, para quem ou para quê, e o que o incomoda hoje.
 
 - Se a explicação já basta, siga para o próximo momento sem perguntar nada
-- Se falta algo, pergunte **uma ou duas coisas por vez**, escritas na própria conversa, e só
-  o que muda os caminhos possíveis. Comente o que ele já disse antes de perguntar: a
-  pergunta nasce da conversa, não de uma lista
+- Se falta algo, pergunte **uma ou duas coisas por vez**, em texto corrido, dentro de uma
+  frase da conversa, e só o que muda os caminhos possíveis. Comente o que ele já disse
+  antes de perguntar: a pergunta nasce da conversa. Pergunta em lista numerada ou em
+  negrito vira questionário, que é o tom do `grill-me`
 - O que dá para supor com segurança, suponha e diga que supôs ("estou pensando que é só
   para você; se não for, muda bastante")
 
