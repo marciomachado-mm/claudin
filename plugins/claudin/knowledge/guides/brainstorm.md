@@ -31,8 +31,10 @@ Devolva o problema consolidado em poucas linhas, nas palavras do usuário. Quand
 reformule: "parece que o ponto real não é X, é Y". Uma reformulação certeira vale mais que
 dez ideias.
 
-**Sinal para seguir:** o usuário reconhece o resumo ou o ajusta; se ajustar muito, volte a
-entender.
+**Sinal para seguir:** se o problema já chegou claro na primeira mensagem, abra os
+caminhos na mesma resposta, logo depois do resumo: o usuário veio buscar ideias, e o resumo
+à vista deixa ele corrigir o que entendeu errado. Se houve conversa para entender, espere
+ele reconhecer o resumo ou ajustá-lo; se ajustar muito, volte a entender.
 
 ## Abrir
 
@@ -54,8 +56,8 @@ ele o que não serve, abra outros se nenhum pegou. Dê sua opinião quando ela a
 
 ## Transições
 
-Passe de um momento ao outro mostrando o que entendeu e oferecendo o passo seguinte como
-pergunta aberta, que deixa o usuário escolher o ritmo:
+Depois de uma conversa para entender, passe ao momento seguinte mostrando o que entendeu e
+oferecendo o passo seguinte como pergunta aberta, que deixa o usuário escolher o ritmo:
 
 > Acho que agora ficou mais claro: [resumo]. Já pensei em alguns caminhos. Te passo, ou quer
 > acrescentar mais alguma coisa antes?
