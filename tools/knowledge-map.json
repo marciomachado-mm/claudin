@@ -23,6 +23,7 @@
       "best-practices",
       "sub-agents"
     ],
+    "plugins/claudin/knowledge/guides/brainstorm.md": [],
     "plugins/claudin/knowledge/guides/choosing-features.md": [
       "features-overview",
       "sub-agents",
@@ -50,6 +51,7 @@
       "skills",
       "sub-agents"
     ],
+    "plugins/claudin/skills/brainstorm/SKILL.md": [],
     "plugins/claudin/skills/create-agent/SKILL.md": [
       "sub-agents",
       "permission-modes"

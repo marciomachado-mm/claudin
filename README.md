@@ -8,8 +8,8 @@ Code puro.
 
 > Em construção. Hoje: `/claudin:audit`, `/claudin:fix`, `/claudin:design`,
 > `/claudin:create-project`, `/claudin:create-agent`, `/claudin:create-skill`,
-> `/claudin:create-hook`, `/claudin:grill-me`, `/claudin:handoff` e `/claudin:about`. A
-> avaliação comparativa com o Claude Code puro está em andamento.
+> `/claudin:create-hook`, `/claudin:grill-me`, `/claudin:brainstorm`, `/claudin:handoff` e
+> `/claudin:about`. A avaliação comparativa com o Claude Code puro está em andamento.
 
 ## Instalar
 
