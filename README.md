@@ -30,10 +30,16 @@ no terminal):
 
    Depois, `/reload-plugins` ou uma sessão nova.
 
-2. **Ligue a atualização automática.** Em marketplace de terceiros ela vem desligada: em
-   `/plugin`, abra **Marketplaces**, escolha `claudin` e selecione **Enable auto-update**
+2. **Ligue a atualização automática.** Em marketplace de terceiros ela vem desligada. Em
+   `/plugin`, vá para a aba **Marketplaces** (não é a tela do plugin, em Installed),
+   escolha `claudin` e selecione **Enable auto-update**
    ([doc oficial](https://code.claude.com/docs/en/plugins/install.md)). Sem ela, atualize
-   quando quiser com `/plugin marketplace update claudin`.
+   quando quiser com `/plugin marketplace update claudin`. O `/claudin:about` avisa quando
+   sai versão nova.
+
+   Se o marketplace foi adicionado de uma pasta local (um clone), o plugin é lido direto da
+   pasta e a atualização automática não traz versão nova: atualize com `git pull` ou troque
+   pelo marketplace do GitHub ([doc oficial](https://code.claude.com/docs/en/plugins/loading.md)).
 
 3. **Teste em qualquer projeto:** `/claudin:about` mostra a versão instalada e os comandos.
 

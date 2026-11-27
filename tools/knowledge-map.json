@@ -44,7 +44,11 @@
       "memory",
       "sub-agents"
     ],
-    "plugins/claudin/skills/about/SKILL.md": [],
+    "plugins/claudin/skills/about/SKILL.md": [
+      "plugins-install",
+      "plugins-loading",
+      "plugins-reference"
+    ],
     "plugins/claudin/skills/audit/SKILL.md": [
       "claude-directory",
       "memory",
