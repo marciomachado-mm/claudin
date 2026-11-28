@@ -50,7 +50,7 @@ cat > '.claude/settings.json' <<'CLAUDIN_EOF'
 CLAUDIN_EOF
 cat > '.claude/skills/release/SKILL.md' <<'CLAUDIN_EOF'
 ---
-description: Publica uma versão nova da CLI no PyPI. Rode com /release <versão>.
+description: Publica uma versão nova da CLI no PyPI.
 disable-model-invocation: true
 argument-hint: "<versão semver, ex: 1.4.0>"
 ---
