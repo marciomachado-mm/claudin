@@ -27,6 +27,13 @@ notas = "notas.cli:main"
 
 [dependency-groups]
 dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/notas"]
 CLAUDIN_EOF
 cat > 'src/notas/cli.py' <<'CLAUDIN_EOF'
 def main() -> None:
